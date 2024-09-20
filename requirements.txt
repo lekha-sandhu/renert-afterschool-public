@@ -1,0 +1,11 @@
+click
+flask_admin
+flask_debugtoolbar
+flask_login   
+flask_session    
+flask_sqlalchemy
+flask_wtf 
+configobj
+sqlalchemy_utils
+flask-shell-ipython
+timeago
