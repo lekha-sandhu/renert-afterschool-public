@@ -40,6 +40,7 @@ db.init_app(app)
 # Load Database model classes
 import models
 from models.exceptions_log import ExceptionLog
+from models.students import Student
 
 with app.app_context():
     db.create_all()
