@@ -1,4 +1,4 @@
-# Copyright (C) 2023 House Gordon Software Company LTD
+# Copyright (C) 2023-2024 House Gordon Software Company LTD
 # All Rights Reserved
 # License: Proprietary
 
@@ -54,7 +54,7 @@ def psql_get_functions(funcname=None):
     """
 
     rc = db.session.execute(text(sql), {"funcname": funcname} )
-    rc = [dict(x) for x in rc]
+    rc = [x._asdict() for x in rc]
     return rc
 
 def psql_function_exists(funcname):
