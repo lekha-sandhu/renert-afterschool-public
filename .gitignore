@@ -1,0 +1,16 @@
+*~
+__pycache__
+*.tsv
+\#*\#
+
+access.log
+error.log
+exceptions.log
+dev.conf
+prod.conf
+
+
+static/funny/
+static/jquery-throttle-debounce/
+static/photobook
+static/trumbowyg/
