@@ -41,6 +41,8 @@ db.init_app(app)
 import models
 from models.exceptions_log import ExceptionLog
 from models.students import Student
+from models.afterschool_classes import AfterschoolClass
+from models.afterschool_signins import AfterschoolSignin
 
 with app.app_context():
     db.create_all()
