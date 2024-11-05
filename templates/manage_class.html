@@ -1,0 +1,59 @@
+<h1> Managing Class {{ afterschool_class.activity }}</h1>
+<h2>Instructor: {{ afterschool_class.instructor.name }}</h2>
+<h2>Room Number: {{ afterschool_class.room }}</h2>
+<h2>Grades: {{ afterschool_class.grades }}</h2>
+
+<br>
+
+
+<br>
+Students:
+<select class="form-select" aria-label="Default select example" name="instructor">
+  <option selected>Select Student:</option>
+  {% for s in students_grade %}
+    <option value="{{ s.id }}">{{ s.name }} {{ "(Gr. " + s.grade + ")" }}</option>
+  {% endfor %}
+</select>
+</br>
+
+
+
+<strong>Present students:</strong>
+<table>
+    <tr>
+        <th>Student Name</th>
+        <th>Sign-in Time</th>
+        <th>Status</th>
+    </tr>
+    {% for s in students %}
+        {% if not s.sign_out_time %}
+        <tr>
+            <td>{{ s.student.name }}</td>
+            <td>{{ s.sign_in_time.strftime("%I:%M %p") }}</td> 
+            <td>Still Here!</td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+</table>
+
+<br> 
+
+<strong>Students who have already left:</strong>
+<table>
+    <tr>
+        <th>Student Name</th>
+        <th>Sign-in Time</th>
+        <th>Sign-out Time</th>
+        <th>Duration (minutes)</th>
+    </tr>
+    {% for s in students %}
+        {% if s.sign_out_time %}
+        <tr>
+            <td>{{ s.student.name }}</td>
+            <td>{{ s.sign_in_time.strftime("%I:%M %p") }}</td> 
+            <td>{{ s.sign_out_time.strftime("%I:%M %p") }}</td>
+            <td>{{ ((s.sign_out_time - s.sign_in_time).seconds // 60) }}</td> 
+        </tr>
+        {% endif %}
+    {% endfor %}
+</table>
