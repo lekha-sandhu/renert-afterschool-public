@@ -98,7 +98,7 @@ def manage_class(afterschool_class_id):
     
     students_grade = []
     for grade in grades:
-        students_grade += Student.query.filter_by(grade=grade).all()
+        students_grade += Student.query.filter_by(grade=grade).order_by(Student.name).all()
     
     return render_template("manage_class.html", afterschool_class=c, students=students, students_grade=students_grade)
     
