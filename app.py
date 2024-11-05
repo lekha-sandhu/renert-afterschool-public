@@ -96,4 +96,4 @@ admin.init_app(app)
 
 # Load all views
 from views import index
-from views import admin
+from views import afterschool_admin

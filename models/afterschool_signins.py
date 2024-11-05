@@ -13,6 +13,9 @@ class AfterschoolSignin(db.Model, TimestampMixin):
     afterschool_class_id = db.Column(db.Integer,db.ForeignKey('afterschool_classes'),nullable=False)
     afterschool_class = db.Relationship('AfterschoolClass')
 
+    afterschool_class_id = db.Column(db.Integer,db.ForeignKey('afterschool_classes'),nullable=False)
+    afterschool_class = db.Relationship('AfterschoolClass')
+
     student_id = db.Column(db.Integer, db.ForeignKey('library_students.id'), nullable=False)
     student = db.Relationship('Student')
 
@@ -30,5 +33,3 @@ class AfterschoolSignin(db.Model, TimestampMixin):
 
     def __repr__(self):
         return f"Afterschool-Signin<id: {self.afterschool_signin_id}>"
-
-    
