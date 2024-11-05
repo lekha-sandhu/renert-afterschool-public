@@ -1,0 +1,99 @@
+<h1>Add Class!</h1>
+
+<form action="/process_new_afterschool_class" method="POST">
+
+  <!-- <div class="mb-3">
+    <label for="exampleFormControlInput1" class="form-label">Name:</label>
+    <input type="text" class="form-control" id="exampleFormControlInput1" name="name">
+  </div> -->
+
+  <!-- <br> -->
+  Select Day(s):
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="Mon" id="flexCheckDefault1" name="day">
+      <label class="form-check-label" for="flexCheckDefault1">
+        Monday
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="Tue" id="flexCheckDefault2" name="day">
+      <label class="form-check-label" for="flexCheckDefault2">
+        Tuesday
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="Wed" id="flexCheckDefault3" name="day">
+      <label class="form-check-label" for="flexCheckDefault3">
+        Wednesday
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="Thu" id="flexCheckDefault4" name="day">
+      <label class="form-check-label" for="flexCheckDefault4">
+        Thursday
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="Fri" id="flexCheckDefault5" name="day">
+      <label class="form-check-label" for="flexCheckDefault5">
+        Friday
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="Sat" id="flexCheckDefault6" name="day">
+      <label class="form-check-label" for="flexCheckDefault6">
+        Saturday
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="Sun" id="flexCheckDefault7" name="day">
+      <label class="form-check-label" for="flexCheckDefault7">
+        Sunday
+      </label>
+    </div>
+  </br>
+
+  <br>
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">Activity:</label>
+      <input type="text" class="form-control" id="exampleFormControlInput1" name="activity">
+    </div>
+  </br>
+
+  <br>
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">Grade(s):</label>
+      <input type="text" class="form-control" id="exampleFormControlInput1" name="grade">
+    </div>
+  </br>
+
+  <br>
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">Room:</label>
+      <input type="text" class="form-control" id="exampleFormControlInput1" name="room">
+    </div>
+  </br>
+
+  <br>
+    Instructor:
+    <select class="form-select" aria-label="Default select example" name="instructor">
+      <option selected>Select Instructor:</option>
+      {% for i in instructors %}
+        <option value="{{i.id}}">{{i.name}}</option>
+      {% endfor %}
+    </select>
+  </br>
+
+  <br>
+    <label for="start_time">Select start time:</label>
+    <input type="time" id="start_time" name="start_time">
+  </br>
+
+  <br>
+    <label for="end_time">Select end time:</label>
+    <input type="time" id="end_time" name="end_time">
+  </br>
+
+  <input type="submit" value="Add Class">
+
+</form>

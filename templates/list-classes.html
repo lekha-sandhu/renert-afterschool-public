@@ -1,0 +1,66 @@
+<style>
+    table {
+        border: 1px solid green;
+
+
+    }
+    td {
+        border: 1px solid blue;
+    }
+</style>
+
+
+
+<h1>Available Afterschool Classes:</h1>
+
+
+<table>
+<tr>
+    <th>
+        ID
+    </th>
+    <th>
+        Activity
+    </th>
+    <th>
+        Weekdays
+    </th>
+    <th>
+        Instructor
+    </th>
+    <th>
+        Room
+    </th>
+    <th>
+        Grades
+    </th>
+</tr>
+{% for c in all_classes %}
+    <tr>
+        <td>
+            {{c.afterschool_class_id}} 
+        </td>
+        <td>
+            {{c.activity}}
+        </td>
+        <td>
+            {{c.weekdays}}
+        </td>
+        <td>
+            {{c.instructor}}
+        </td>
+        <td>
+            {{c.room}}
+        </td>
+        <td>
+            {{c.grades}}
+        </td>
+        <td>
+            <a href="/manage_class/{{c.afterschool_class_id}}">
+            Manage class
+            </a>
+        </td>
+    </tr>
+
+{% endfor %}
+</table>
