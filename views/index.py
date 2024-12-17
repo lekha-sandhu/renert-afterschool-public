@@ -17,6 +17,8 @@ from models.afterschool_classes import AfterschoolClass
 from models.afterschool_signins import AfterschoolSignin
 import global_settings
 from datetime import datetime
+from datetime import date
+
 
 
 @app.route('/')
@@ -53,7 +55,7 @@ def process_new_afterschool_class():
     start_time = request.form.get("start_time")
     end_time = request.form.get("end_time")
 
-    if not all([name, days, activity, grade, room, instructor, start_time, end_time]):
+    if not all([days, activity, grade, room, instructor, start_time, end_time]):
         return "error: cannot leave blank"
     
     valid_grades = set(str(i) for i in range(1, 13)) | {'K'}
@@ -61,7 +63,6 @@ def process_new_afterschool_class():
     if not all(g.strip() in valid_grades for g in grades):
         return "error: grades must be 'K' or a number between 1 and 12, separated by commas"
 
-    from datetime import datetime
     start_time = datetime.strptime(start_time, "%H:%M")
     end_time = datetime.strptime(end_time, "%H:%M")
 
@@ -93,12 +94,69 @@ def process_new_afterschool_class():
 @app.route("/manage_class/<int:afterschool_class_id>")
 def manage_class(afterschool_class_id):
     c = AfterschoolClass.query.get(afterschool_class_id)
-    students = AfterschoolSignin.query.filter_by(afterschool_class_id=afterschool_class_id).all()
+    today = date.today()
+    students_signed_in = AfterschoolSignin.query.filter_by(afterschool_class_id=afterschool_class_id).filter_by(sign_in_date_cache=today).all()
     grades = c.grades.split(',')
     
-    students_grade = []
+    signed_in_ids = {s.student_id for s in students_signed_in if not s.sign_out_time}
+
+
+    all_students_in_grades = []
     for grade in grades:
-        students_grade += Student.query.filter_by(grade=grade).order_by(Student.name).all()
+        all_students_in_grades += Student.query.filter_by(grade=grade).order_by(Student.name).all()
+
+    available_students = [s for s in all_students_in_grades if s.id not in signed_in_ids]
+
+    return render_template("manage_class.html", afterschool_class=c, students=students_signed_in, students_grade=available_students)
+
+
+
+@app.route("/sign_in_student", methods=["POST"])
+def process_student_sign_in():
+    student_id = request.form.get("student_id")
+    class_id = request.form.get("class_id")
+    sign_in_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+    print(f"Signing in student {student_id} to class_id {class_id} at {sign_in_time}")
+
+    x =  AfterschoolSignin(
+        student_id=student_id,
+        afterschool_class_id=class_id,
+        sign_in_time=sign_in_time
+    )
+    db.session.add(x)
+    db.session.commit()
+
+    return redirect("/manage_class/"+str(class_id))
+
+
+@app.route("/sign_out_student", methods=["POST"])
+def process_student_sign_out():
+    student_id = request.form.get("student_id")
+    class_id = request.form.get("class_id")
+    afterschool_signin_id = request.form.get("afterschool_signin_id")
+    sign_out_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
     
-    return render_template("manage_class.html", afterschool_class=c, students=students, students_grade=students_grade)
+    record = db.session.query(AfterschoolSignin).get(afterschool_signin_id)
+        
+    if record:
+        record.sign_out_time = sign_out_time
+        db.session.commit()
     
+    return redirect("/manage_class/"+str(class_id))
+
+@app.route("/sign_out_all_students", methods=["POST"])
+def sign_out_all_students():
+    class_id = request.form.get("class_id")
+    today = date.today()
+
+    students_signed_in = AfterschoolSignin.query.filter_by(
+        afterschool_class_id=class_id,
+        sign_in_date_cache=today
+    ).filter(AfterschoolSignin.sign_out_time.is_(None)).all()
+
+    for student in students_signed_in:
+        student.sign_out_time = datetime.now()  
+        db.session.add(student)
+
+    db.session.commit()
+    return redirect("/manage_class/" + str(class_id))

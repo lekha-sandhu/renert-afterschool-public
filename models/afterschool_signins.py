@@ -2,7 +2,7 @@
 # All Rights Reserved
 # License: Proprietary
 
-from sqlalchemy import text
+from sqlalchemy import text,Computed
 from root import db
 from hgsc_utils.sqla.timestamp_mixin import TimestampMixin
 
@@ -21,6 +21,11 @@ class AfterschoolSignin(db.Model, TimestampMixin):
 
     sign_in_time = db.Column(db.TIMESTAMP(timezone=True),nullable=False)
     sign_out_time = db.Column(db.TIMESTAMP(timezone=True),nullable=True)
+
+    # "Computed" is postgres' "GENERATED ALWAYS AS" - an auto-generated column,                                                              
+    # truncating the sign-in timestamp to date (for quicker indexing and querying)                                                            
+    sign_in_date_cache = db.Column(db.Date,Computed(text("sign_in_time")),nullable=False,index=True)
+
 
     __table_args__ = (
         db.CheckConstraint(text("""
