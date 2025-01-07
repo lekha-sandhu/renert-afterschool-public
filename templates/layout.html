@@ -1,64 +1,42 @@
-<!doctype html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <meta http-equiv="refresh" content="600">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    {% block head %}{% endblock %}
-    <title>
-        {{ page_title if page_title else "Renert After-School" }}
-    </title>
+    <style>
+        .navbar {
+            height: 80px; 
+        }
+        .navbar-brand img {
+            height: 80px; 
+            margin-right: 20px;
+        }
+    </style>
+
 </head>
-
 <body>
-
-    <header class="intro-header" id="top">
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <div class="my-heading">
-                        <center>
-                            <h2 class="mt-3">
-                                <a href="/">
-                                </a>
-                            </h2>
-                            </center>
-                    </div>
-
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="http://127.0.0.1:4000/">
+                <img src="https://timetable.renertschool.ca/static/renert-logo.png" alt="Renert Logo" style="height: 30px; margin-right: 10px;">
+                Renert After School
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" href="http://127.0.0.1:4000/list-classes" href="/">List of Classes</a>
+                    <a class="nav-link" href="/reports">Reports</a>
+                    <a class="nav-link" href="http://127.0.0.1:4000/about">About</a>
                 </div>
             </div>
         </div>
-    </header>
-
-    <div class="container-fluid">
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        <br/>
-        {% for category,message in messages %}
-        <div class="alert {% if category != "message" %}alert-{{category}}{% else %}alert-danger{% endif %}" role="alert">
-            {{ message }}
-        </div>
-        {% endfor %}
-        <br/>
-        {% endif %}
-        {% endwith %}
-
-        {% block content %}{% endblock %}
-    </div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-{% block javascript %}{% endblock %}
-
+    </nav>
+    {% block content %}{% endblock %}
 
 </body>
 </html>
