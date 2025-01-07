@@ -43,6 +43,9 @@ from models.exceptions_log import ExceptionLog
 from models.students import Student
 from models.afterschool_classes import AfterschoolClass
 from models.afterschool_signins import AfterschoolSignin
+from models.members import Member
+from models.login_users import LoginUser
+from models.permissions import Permission,Role,RoleToPermission,LoginUserToRole,permission_required
 
 with app.app_context():
     db.create_all()
@@ -58,7 +61,6 @@ set_logger_level_info_or_debug(app)
 test_logging_messages(app)
 app.register_blueprint(logtest_blueprint, url_prefix="/logtest")
 
-"""
 # Initialize Flask-User LoginManager
 from flask_login import LoginManager
 
@@ -66,14 +68,13 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
-
 @login_manager.user_loader
 def load_user(login_user_id):
     #app.logger.debug("load-user: login_user_id = %d" % login_user_id)
     user = LoginUser.query.get(login_user_id)
     #app.logger.debug("load-user: loaded user %s" % (str(user)))
     return user
-"""
+
 
 # Load custom Jinja2 filters
 import jinja_filters
@@ -95,5 +96,6 @@ import click_commands
 admin.init_app(app)
 
 # Load all views
+from views import google_auth
 from views import index
 from views import afterschool_admin

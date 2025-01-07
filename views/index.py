@@ -15,6 +15,9 @@ from root import app,db
 from models.students import Student
 from models.afterschool_classes import AfterschoolClass
 from models.afterschool_signins import AfterschoolSignin
+from flask_login import login_required
+from models.permissions import permission_required
+
 import global_settings
 from datetime import datetime
 from datetime import date
@@ -22,6 +25,7 @@ from datetime import date
 
 
 @app.route('/')
+@login_required
 def index():
     students = Student.query.filter(Student.grade.in_(["1", "2", "3"])).all()  # Filter students in grades 1-3
 

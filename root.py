@@ -9,6 +9,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 from flask_admin.base import MenuLink
+from flask_login import LoginManager
 
 
 app = Flask(__name__)
@@ -23,3 +24,5 @@ db = SQLAlchemy()
 
 admin = Admin(name='Database-Admin',url="/admin")
 admin.add_link(MenuLink(name='Back to Website', url='/'))
+
+login_manager = LoginManager()
