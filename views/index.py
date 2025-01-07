@@ -23,9 +23,7 @@ from datetime import date
 
 @app.route('/')
 def index():
-    students = Student.query.filter(Student.grade.in_(["1", "2", "3"])).all()  # Filter students in grades 1-3
-
-    return render_template("index.html", students=students)
+    return render_template("index.html")
 
 @app.route('/new')
 def new_afterschool_class():
