@@ -25,6 +25,10 @@ from datetime import date
 def index():
     return render_template("index.html")
 
+@app.route('/about')
+def about_page():
+    return render_template("about.html")
+
 @app.route('/new')
 def new_afterschool_class():
     s = Student.query.filter_by(grade='Staff').all()
