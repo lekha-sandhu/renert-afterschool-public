@@ -12,7 +12,7 @@ export FLASK_DEBUG=
 export FLASK_APP=app:app
 export CONFIG_FILE=prod.conf
 
-NAME="links"
+NAME="Afterschool"
 PORT=$(sed -nE \
 	'/^PORT *= */ { s/^PORT *= *([0-9]+)$/\1/ ; p ; q0 } ; $q1' \
 	"$CONFIG_FILE") \
@@ -22,12 +22,12 @@ WORKERS=2
 
 # Change to /var/log/app/ if needed.
 # Logging support log-rotate (see ./contrib file)
-LOGDIR=.
+LOGDIR=logs
 
 # disable any internal buffering in stdio in python
 export PYTHONUNBUFFERED=1
 
-PID=links-prod.pid
+PID=afterschool-prod.pid
 
 exec setpriv --nnp \
 	gunicorn3 --reload \
