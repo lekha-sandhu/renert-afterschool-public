@@ -22,7 +22,7 @@ csrf = CSRFProtect()
 
 db = SQLAlchemy()
 
-admin = Admin(name='Database-Admin',url="/admin")
+admin = Admin(name='Afterschool-Database-Admin',url="/admin")
 admin.add_link(MenuLink(name='Back to Website', url='/'))
 
 login_manager = LoginManager()
