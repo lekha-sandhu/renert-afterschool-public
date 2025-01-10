@@ -1,0 +1,113 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<style>
+
+</style>
+
+<div class="col-6">
+<table class="table table-bordered border-primary">
+  <thead>
+    <tr>
+      <th scope="col">Student Name</th>
+      <th scope="col">Student ID Number</th>
+      <th scope="col">Date</th>
+      <th scope="col">Activity Name</th>
+      <th scope="col">Activity ID</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{student.name}}</td>
+      <td>{{student.id}}</td>
+      <td>{{date}}</td>
+      <td>{{activity.activity}}</td>
+      <td>{{activity.afterschool_class_id}}</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+  <h1> Signins: </h1>
+  <table class="table table-bordered border-primary table-striped">
+    <thead>
+      <tr>
+        <th>Activity</th>
+        <th>Activity ID</th>
+        <th>student</th>
+        <th>Date</th>
+        <th>Sign in Time</th>
+        <th>Sign out time</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for s in signins %}
+      <tr>
+        <td>{{s.afterschool_class.activity}}</td>
+        <td>{{s.afterschool_class.afterschool_class_id}}</td>
+        <td>{{s.student.name}}</td>
+        <td>{{s.sign_in_time.strftime("%A- %d / %m / %Y")}}
+        <td>{{s.sign_in_time.strftime("%H:%M")}}</td>
+        <td>
+          {% if s.sign_out_time != None %}
+              {{ s.sign_out_time.strftime("%H:%M") }}
+          {% else %}
+              None
+          {% endif %}
+      </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <table class="table table-bordered border-primary">
+    <thead>
+      <tr>
+        <th>Activity ID</th>
+        <th>Count</th>
+      </tr>
+    </thead>
+
+    {% for class_id, class_count in class_counter %}
+    <tr>
+        <td>{{ class_id }}</td>
+        <td>{{ class_count }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <table class="table table-bordered border-primary">
+    <thead>
+      <tr>
+        <th>Activity ID</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in time_spent %}
+      <tr>
+        {% if entry|length == 3 %}
+          {% set student_id, class_id, total_time = entry %}
+        {% elif entry|length == 2 %}
+          {% set class_id, total_time = entry %}
+          {% set student_id = None %}
+        {% else %}
+          {% set class_id, total_time, student_id = None, None, None %}
+        {% endif %}
+        
+        {% if total_time is not none %}
+          {% set hours = total_time // 3600 %}
+          {% set minutes = (total_time % 3600) // 60 %}
+          {% set seconds = total_time % 60 %}
+          <td>{{ class_id }}</td>
+          <td>{{ hours }}h {{ minutes }}m {{ seconds }}s</td>
+        {% else %}
+          <td>{{ class_id if class_id is not none else 'N/A' }}</td>
+          <td>N/A</td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  

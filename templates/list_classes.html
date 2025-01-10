@@ -1,0 +1,19 @@
+<table>
+    <tr>
+      <th>Activity</th>
+      <th>Weekdays</th>
+      <th>Instructor</th>
+      <th>Room</th>
+    </tr>
+
+
+    {% for c in all_classes %}
+    <tr>
+      <td>{{c.activity}}</td>
+      <td>{{c.weekdays}}</td>
+      <td>{{c.instructor}}</td>
+      <td>{{c.room}}</td>
+    </tr>
+    {% endfor %}
+
+  </table>

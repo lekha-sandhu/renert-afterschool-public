@@ -1,0 +1,33 @@
+<form action = "/report" method = "POST"> 
+
+    <select class="form-control" name = "student">
+        <option value="">Select a student</option>
+        {% for s in student %}
+            <option value="{{s.id}}">{{s.name}}</option>
+        {% endfor %}
+    </select>
+
+    <br>
+    <br>
+    <br>
+
+    <input type="month", name = "date"> </input>
+
+    <br>
+    <br>
+    <br>
+
+    <select class="form-control" name = "activity">
+        <option value="">Select an activity</option>
+        {% for a in activity %}
+            <option value="{{a.afterschool_class_id}}">{{a.activity}}</option>
+        {% endfor %}
+    </select>
+    
+    <br>
+    <br>
+    <br>
+
+    <button type="submit" class="btn btn-primary">View Report</button>
+
+  </form>
