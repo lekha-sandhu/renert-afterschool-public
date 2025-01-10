@@ -12,9 +12,8 @@ export FLASK_DEBUG=1
 export FLASK_APP=app:app
 export CONFIG_FILE=dev.conf
 
-PORT=$(sed -nE \
-	'/^PORT *= */ { s/^PORT *= *([0-9]+)$/\1/ ; p ; q0 } ; $q1' \
-	"$CONFIG_FILE") \
-	|| die "error: can't find valid PORT=NNNNN settings in '$CONFIG_FILE'"
+PORTLINE=$(grep "^PORT *= *[0-9][0-9]*$" "$CONFIG_FILE") \
+	|| die "can't find valid PORT=NNNN settings in config file '$CONFIG_FILE'"
+PORT=$(echo "$PORTLINE" | sed --posix 's/.*= *//')
 
-exec flask run --reload -p "$PORT" -h 127.0.0.1
+exec /usr/bin/env python3 -m flask run --reload -p "$PORT" -h 127.0.0.1
