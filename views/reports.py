@@ -19,90 +19,13 @@ from models.afterschool_classes import AfterschoolClass
 from models.afterschool_signins import AfterschoolSignin
 import global_settings
 
-from datetime import datetime, timedelta  
+from datetime import datetime, timedelta
 
-
-@app.route('/')
-def index():
-    # Get name of a random staff member
-    # s = Student.query.filter_by(grade='12').order_by(func.random()).first()
-    
-    s = Student.query.filter_by(grade='2').all()
-    class_activity = "math"
-    grades = "2,3"
-    return render_template("index.html",
-                           students=s, class_activity = class_activity, grades = grades)
-
-
-@app.route('/afterschool/<activity_name>')
-def afterschool_page(activity_name):
-    grades = 2,3
-    s = Student.query.filter_by(grade='2').all()
-    
-    return render_template("afterschool.html", activity_name = activity_name, students = s)
-
-@app.route('/add_student')
-def add_student():
-    
-    return render_template("add_student.html")
-
-@app.route('/new-afterschool-class')
-def new_afterschool_class():
-    
-    s = Student.query.filter_by(grade='Staff').all()
-    
-    return render_template("new_afterschool_class.html", instructors = s)
-
-
-@app.route("/process-new-afterschool-class", methods = ["POST"])
-def process_new_afterschool_class():
-    activity_name = request.form.get("activity_name")
-    room = request.form.get("room")
-    grades = request.form.get("grades")
-    mon = request.form.get("1")
-    tue = request.form.get("2")
-    wed = request.form.get("3")
-    thu = request.form.get("4")
-    fri = request.form.get("5")
-    sat = request.form.get("6")
-    sun = request.form.get("7")
-    teacher_id = request.form.get("teacher_name")
-    starttime_str = request.form.get("starttime")
-    endtime_str = request.form.get("endtime")
-    
-    start_time = datetime.strptime(starttime_str, "%H:%M")
-    end_time = datetime.strptime(endtime_str, "%H:%M")
-    
-    #print("******** Teacher = ", teacherme)
-    
-    ins = Student.query.get(int(teacher_id))
-    
-    x = AfterschoolClass()
-    x.room = room
-    x.activity = activity_name
-    x.instructor = ins
-    x.start_time = starttime_str
-    x.end_time = endtime_str
-    x.weekdays = "Wed,Fri"
-    x.grades = grades
-    
-    db.session.add(x)
-    db.session.commit()
-
-    return(f"Activity name = {activity_name} <br> Grades = {grades} <br> Room = {room} <br>\
-        Monday = {mon} <br> Tueday = {tue} <br> Wednesday = {wed} <br> Thursday = {thu} <br> Friday = {fri} \
-        <br> Saturday = {sat} <br> Sunday = {sun} <br> Teacher name = {teacher_id} <br> Start time = {starttime_str} \
-        <br> End time = {endtime_str}")
-    
-@app.route("/list_classes")
-def list_classes():
-    a = AfterschoolClass.query.all()
-    return render_template("list_classes.html", all_classes = a)
 
 @app.route("/pick_student_report")
 def pick_student_report():
     all_students = Student.query.filter(Student.grade != 'Staff').all()
-    
+
     return render_template("pick_student_report.html", students = all_students)
 
 @app.route("/studentreport", methods = ["POST"])
