@@ -1,0 +1,38 @@
+STUDENT REPORT PLACEHOLDER
+
+student id is {{sid}}
+
+
+<!--
+{% for s in signins%}
+class = {{s.afterschool_class.instructor.name}}   ( {{s.afterschool_class.instructor.student_email}} )
+<p></p>
+time in = {{s.sign_in_time}}
+<p></p>
+time out = {{s.sign_out_time}}
+{% endfor %}
+-->
+
+<table>
+    <tr>
+      <th>Date</th>
+      <th>Class</th>
+      <th>Instructor</th>
+      <th>Sign in time</th>
+      <th>Sign out time</th>
+      <th>Duration</th>
+    </tr>
+
+
+    {% for s in signins %}
+    <tr>
+      <td>{{s.sign_in_time.strftime("%m/%d/%Y")}}</td>
+      <td>{{s.afterschool_class.name}}</td>
+      <td>{{s.afterschool_class.instructor.name}}   </td>
+      <td>{{s.sign_in_time.strftime("%H: %M")}}   </td>
+      <td>{{s.sign_out_time.strftime("%H: %M")}}   </td>
+      <!-- <td>{{s.sign_out_time.strftime("%H: %M: %S")}}   </td> -->
+    </tr>
+    {% endfor %}
+
+  </table>

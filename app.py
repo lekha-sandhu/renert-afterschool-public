@@ -99,3 +99,4 @@ admin.init_app(app)
 from views import google_auth
 from views import index
 from views import afterschool_admin
+from views import reports
