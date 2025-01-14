@@ -134,7 +134,8 @@ def manage_class(afterschool_class_id):
 def process_student_sign_in():
     student_id = request.form.get("student_id")
     class_id = request.form.get("class_id")
-    sign_in_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+    sign_in_time = datetime.now().astimezone(tz=global_settings.tz)
+
     print(f"Signing in student {student_id} to class_id {class_id} at {sign_in_time}")
 
     x =  AfterschoolSignin(
@@ -155,7 +156,7 @@ def process_student_sign_out():
     student_id = request.form.get("student_id")
     class_id = request.form.get("class_id")
     afterschool_signin_id = request.form.get("afterschool_signin_id")
-    sign_out_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+    sign_out_time = datetime.now()
     
     record = db.session.query(AfterschoolSignin).get(afterschool_signin_id)
         
@@ -178,7 +179,7 @@ def sign_out_all_students():
     ).filter(AfterschoolSignin.sign_out_time.is_(None)).all()
 
     for student in students_signed_in:
-        student.sign_out_time = datetime.now()  
+        student.sign_out_time = datetime.now().astimezone(tz=global_settings.tz)
         db.session.add(student)
 
     db.session.commit()
