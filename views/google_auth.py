@@ -200,7 +200,7 @@ def callback():
 def logout():
     flash_clear_messages()
     logout_user()
-    return redirect(url_for("self_serve_main"))
+    return redirect(url_for("index"))
 
 
 def get_google_provider_cfg():
