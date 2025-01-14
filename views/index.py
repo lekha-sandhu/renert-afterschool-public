@@ -15,6 +15,9 @@ from root import app,db
 from models.students import Student
 from models.afterschool_classes import AfterschoolClass
 from models.afterschool_signins import AfterschoolSignin
+from flask_login import login_required
+from models.permissions import permission_required
+
 import global_settings
 from datetime import datetime
 from datetime import date
@@ -22,25 +25,35 @@ from datetime import date
 
 
 @app.route('/')
+@login_required
+@permission_required("afterschool")
 def index():
     return render_template("index.html")
 
 @app.route('/about')
+@login_required
+@permission_required("afterschool")
 def about_page():
     return render_template("about.html")
 
 @app.route('/new')
+@login_required
+@permission_required("afterschool")
 def new_afterschool_class():
     s = Student.query.filter_by(grade='Staff').all()
     return render_template("new.html", instructors = s)
 
 @app.route('/list-classes')
+@login_required
+@permission_required("afterschool")
 def list_all_classes():
     a = AfterschoolClass.query.all()
     return render_template("list-classes.html", all_classes=a)
 
 
 @app.route('/process_new_afterschool_class', methods=["POST"])
+@login_required
+@permission_required("afterschool")
 def process_new_afterschool_class():
     pprint(request.form)
 
@@ -94,6 +107,8 @@ def process_new_afterschool_class():
 
 
 @app.route("/manage_class/<int:afterschool_class_id>")
+@login_required
+@permission_required("afterschool")
 def manage_class(afterschool_class_id):
     c = AfterschoolClass.query.get(afterschool_class_id)
     today = date.today()
@@ -114,6 +129,8 @@ def manage_class(afterschool_class_id):
 
 
 @app.route("/sign_in_student", methods=["POST"])
+@login_required
+@permission_required("afterschool")
 def process_student_sign_in():
     student_id = request.form.get("student_id")
     class_id = request.form.get("class_id")
@@ -132,6 +149,8 @@ def process_student_sign_in():
 
 
 @app.route("/sign_out_student", methods=["POST"])
+@login_required
+@permission_required("afterschool")
 def process_student_sign_out():
     student_id = request.form.get("student_id")
     class_id = request.form.get("class_id")
@@ -147,6 +166,8 @@ def process_student_sign_out():
     return redirect("/manage_class/"+str(class_id))
 
 @app.route("/sign_out_all_students", methods=["POST"])
+@login_required
+@permission_required("afterschool")
 def sign_out_all_students():
     class_id = request.form.get("class_id")
     today = date.today()

@@ -23,17 +23,26 @@ from hgsc_utils.flask_admin.flask_admin_menu_separator import DividerMenu
 from hgsc_utils.flask_admin.flask_admin_permission_mixin import RenertAdminPermissionMixin
 
 from models.afterschool_classes import AfterschoolClass
+from models.afterschool_signins import AfterschoolSignin
+
+class AfterschoolAdminPermissionMixin(RenertAdminPermissionMixin):
+    needed_permission = "afterschool_admin"
 
 
-
-class AfterschoolClassesView(ModelView):
-    # creation of transactions can be more easily done through the students' interface
-    can_create = False
+class AfterschoolClassesView(AfterschoolAdminPermissionMixin,ModelView):
+    can_create = True
     can_delete = False
     can_edit = True
     can_export = True
 
     column_sortable_list = [
+        'activity',
+        'room',
+        'instructor.name',
+        'grades',
+        'weekdays',
+        'start_time',
+        'end_time',
     ]
     column_list = [
         'activity',
@@ -76,4 +85,31 @@ class AfterschoolClassesView(ModelView):
         ("created_at",True),
     ]
 
-admin.add_view(AfterschoolClassesView(AfterschoolClass, db.session, name="AfterSchool Classes", category="After School Activities"))
+
+
+class AfterschoolSigninsView(AfterschoolAdminPermissionMixin,ModelView):
+    can_create = False
+    can_delete = False
+    can_edit = True
+    can_export = True
+
+    column_searchable_list = [
+        'student.name',
+        'afterschool_class.activity',
+    ]
+
+    column_filters = [
+        'afterschool_class',
+        'student',
+        'sign_in_time',
+        'sign_out_time',
+        'sign_in_date_cache'
+    ]
+
+    column_default_sort = [
+        ("updated_at",True),
+        ("created_at",True),
+    ]
+
+admin.add_view(AfterschoolClassesView(AfterschoolClass, db.session, name="AfterSchool Classes",category="Afterschool"))
+admin.add_view(AfterschoolSigninsView(AfterschoolSignin, db.session, name="AfterSchool Sign-ins",category="Afterschool"))
