@@ -1,6 +1,8 @@
 {% extends "layout.html" %}
 
 {% block head %}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css" />
+<script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
         <style>
             table {
                 border: 1px solid green;
@@ -30,10 +32,9 @@
     <body class="container mt-4">
         <h1 class="text-center">Available Afterschool Classes</h1>
 
-        <table class="table table-bordered">
+        <table id="my_table" class="table table-bordered">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Activity</th>
                     <th>Weekdays</th>
                     <th>Instructor</th>
@@ -45,7 +46,6 @@
             <tbody>
                 {% for c in all_classes %}
                 <tr>
-                    <td>{{ c.afterschool_class_id }}</td>
                     <td>{{ c.activity }}</td>
                     <td>{{ c.weekdays }}</td>
                     <td>{{ c.instructor }}</td>
@@ -59,6 +59,11 @@
                 </tr>
                 {% endfor %}
             </tbody>
+            <script>
+                $(document).ready( function () {
+                $('#my_table').DataTable({ "paging": false});
+                } );
+            </script>
         </table>
     </body>
 

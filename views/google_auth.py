@@ -68,7 +68,7 @@ def  google_auth_dummy_login():
     # See http://flask.pocoo.org/snippets/62/ for an example.
     if not is_safe_url(next):
         return abort(400)
-    return redirect(next or url_for('librarian_serve_main'))
+    return redirect(next or url_for('index'))
 
 @app.route("/login")
 def login():
@@ -193,14 +193,14 @@ def callback():
     if not is_safe_url(next):
         return abort(400)
 
-    return redirect(next or url_for('librarian_serve_main'))
+    return redirect(next or url_for('index'))
 
 
 @app.route("/logout")
 def logout():
     flash_clear_messages()
     logout_user()
-    return redirect(url_for("self_serve_main"))
+    return redirect(url_for("index"))
 
 
 def get_google_provider_cfg():

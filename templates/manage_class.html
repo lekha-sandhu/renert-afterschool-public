@@ -3,6 +3,10 @@
 {% block head %}
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css" />
+        <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
+
         <style>
             table {
                 width: 100%;
@@ -46,12 +50,15 @@
         </form>
 
         <h4 class="mt-4">Present Students</h4>
-        <table>
+        <table id="sign_in_table">
+            <thead>
             <tr>
                 <th>Student Name</th>
                 <th>Sign-in Time</th>
                 <th>Status</th>
             </tr>
+            </thead>
+            <tbody>
             {% for s in students %}
                 {% if not s.sign_out_time %}
                 <tr>
@@ -69,6 +76,7 @@
                 </tr>
                 {% endif %}
             {% endfor %}
+            </tbody>
         </table>
 
         <form method="POST" action="/sign_out_all_students" class="mt-3">
@@ -77,13 +85,16 @@
         </form>
 
         <h4 class="mt-4">Students Who Have Left</h4>
-        <table>
+        <table id="sign_out_table">
+            <thead>
             <tr>
                 <th>Student Name</th>
                 <th>Sign-in Time</th>
                 <th>Sign-out Time</th>
                 <th>Duration (minutes)</th>
             </tr>
+            </thead>
+            <tbody>
             {% for s in students %}
                 {% if s.sign_out_time %}
                 <tr>
@@ -94,12 +105,21 @@
                 </tr>
                 {% endif %}
             {% endfor %}
+            </tbody>
         </table>
 
         <script>
             $(function() {
                 $("#student_list").select2();
             });
+
+            $(document).ready( function () {
+                $('#sign_in_table').DataTable({ "paging": false});
+            } );
+
+            $(document).ready( function () {
+                $('#sign_out_table').DataTable({ "paging": false});
+            } );
         </script>
     </body>
 {% endblock %}
