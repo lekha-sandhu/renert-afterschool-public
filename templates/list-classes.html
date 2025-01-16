@@ -31,7 +31,7 @@
 
     <body class="container mt-4">
         <h1 class="text-center">Available Afterschool Classes</h1>
-
+        {% set today = ["Mon", "Tue", "Wed", "Thu", "Friday", "Sat", "Sun"][now().weekday()] %}
         <table id="my_table" class="table table-bordered">
             <thead>
                 <tr>
@@ -44,7 +44,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% for c in all_classes %}
+                {% for c in all_classes|sort(attribute='weekdays', reverse=false) %}
+                {% if today in c.weekdays %}
                 <tr>
                     <td>{{ c.activity }}</td>
                     <td>{{ c.weekdays }}</td>
@@ -57,7 +58,10 @@
                         </a>
                     </td>
                 </tr>
-                {% endfor %}
+            {% endif %}
+            {% endfor %}
+
+
             </tbody>
             <script>
                 $(document).ready( function () {

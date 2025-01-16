@@ -21,6 +21,8 @@ from models.permissions import permission_required
 import global_settings
 from datetime import datetime
 from datetime import date
+app.jinja_env.globals['now'] = datetime.now
+
 
 
 
