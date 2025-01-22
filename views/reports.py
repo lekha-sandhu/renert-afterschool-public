@@ -21,34 +21,15 @@ import global_settings
 
 from datetime import datetime, timedelta
 
-
-@app.route("/pick_student_report")
-def pick_student_report():
-    all_students = Student.query.filter(Student.grade != 'Staff').all()
-
-    return render_template("pick_student_report.html", students = all_students)
-
-@app.route("/studentreport", methods = ["POST"])
-def student_report():
-    student_id = request.form.get("student")
-    signins = AfterschoolSignin.query.filter_by(student_id = student_id).all()
-    return render_template("student_report.html", sid = student_id, signins = signins)
-
-@app.route("/pick_monthly_report")
-def pick_monthly_report():    
-    return render_template("pick_monthly_report.html")
-
-@app.route("/monthreport", methods = ["POST"])
-def monthreport():
-    month = request.form.get("date")    
-    return render_template("monthly_report.html", month = month)
-
-@app.route("/filtered_reports")
-def filtered_reports():
+@app.route("/pick_report")
+def pick_report():
     all_students = Student.query.filter(Student.grade != 'Staff').all()
     activities = AfterschoolClass.query.all()
     
-    return render_template("filtered_reports.html", student = all_students, activity = activities)
+    return render_template("pick_report.html", student = all_students, activity = activities)
+
+
+
 
 @app.route("/report", methods = ["POST"])
 def report():
