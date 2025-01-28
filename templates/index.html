@@ -3,6 +3,27 @@
 
 {% block content %}
 
-   <h1> Welcome to Renert Schools After School Care Website!</h1>
+<html>
+   <body>
+      <h1>Welcome to Renert School's Afterschool Website!</h1>
+      <label for="search-bar">Search Student:</label>
+      <input type="text" id="search-bar" name="search">
+
+      <script>
+      const searchInput = document.getElementById('search');
+
+      searchInput.addEventListener('input', () => {
+         searchFunction(); 
+      });
+
+      function searchFunction() {
+         const searchTerm = searchInput.value;
+         console.log("Searching for:", searchTerm); 
+      }
+      </script>
+   </body>
+</html>
+
 
 {% endblock %}
+
