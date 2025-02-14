@@ -1,29 +1,24 @@
 {% extends "layout.html" %}
 
-
 {% block content %}
+   <h1>Welcome to Renert School's Afterschool Website!</h1>
+   <form>
+      <label for="name"><b>Search Student:</b></label>
+      <input name="name" id="name" oninput="input_changed()">
+   </form>
 
-<html>
-   <body>
-      <h1>Welcome to Renert School's Afterschool Website!</h1>
-      <label for="search-bar">Search Student:</label>
-      <input type="text" id="search-bar" name="search">
+   <div id="results"></div> 
 
-      <script>
-      const searchInput = document.getElementById('search');
-
-      searchInput.addEventListener('input', () => {
-         searchFunction(); 
-      });
-
-      function searchFunction() {
-         const searchTerm = searchInput.value;
-         console.log("Searching for:", searchTerm); 
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script>
+      function input_changed() {
+         var q = $("#name").val();
+         console.log("Searching for: ", q);
+         $.get("/search", { q: q }, got_results);
       }
-      </script>
-   </body>
-</html>
 
-
+      function got_results(data) {
+         console.log("Got results: ", data);
+      }
+   </script>
 {% endblock %}
-

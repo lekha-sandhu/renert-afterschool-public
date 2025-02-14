@@ -32,6 +32,15 @@ app.jinja_env.globals['now'] = datetime.now
 def index():
     return render_template("index.html")
 
+@app.route('/search')
+@login_required
+@permission_required("afterschool")
+def search():
+    query = request.args.get('q')  
+    if query:
+        return query
+    return ""  
+
 @app.route('/about')
 @login_required
 @permission_required("afterschool")
@@ -50,6 +59,7 @@ def new_afterschool_class():
 @permission_required("afterschool")
 def list_all_classes():
     a = AfterschoolClass.query.all()
+    print(a)
     return render_template("list-classes.html", all_classes=a)
 
 

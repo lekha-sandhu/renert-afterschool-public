@@ -30,6 +30,7 @@
 {% block content %}
 
     <body class="container mt-4">
+
         <h1 class="text-center">Available Afterschool Classes</h1>
         {% set today = ["Mon", "Tue", "Wed", "Thu", "Friday", "Sat", "Sun"][now().weekday()] %}
         <table id="my_table" class="table table-bordered">
@@ -44,7 +45,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% for c in all_classes|sort(attribute='weekdays', reverse=false) %}
+            
+            {% for c in all_classes|sort(attribute='weekdays', reverse=false) %}
                 {% if today in c.weekdays %}
                 <tr>
                     <td>{{ c.activity }}</td>
@@ -58,7 +60,24 @@
                         </a>
                     </td>
                 </tr>
-            {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {% for c in all_classes|sort(attribute='weekdays', reverse=false) %}
+                {% if today not in c.weekdays %}
+                <tr>
+                    <td>{{ c.activity }}</td>
+                    <td>{{ c.weekdays }}</td>
+                    <td>{{ c.instructor }}</td>
+                    <td>{{ c.room }}</td>
+                    <td>{{ c.grades }}</td>
+                    <td>
+                        <a href="/manage_class/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
+                            Manage Class
+                        </a>
+                    </td>
+                </tr>
+                {% endif %}
             {% endfor %}
 
 
