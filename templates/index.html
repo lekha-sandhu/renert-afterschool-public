@@ -1,8 +1,24 @@
 {% extends "layout.html" %}
 
-
 {% block content %}
+   <h1>Welcome to Renert School's Afterschool Website!</h1>
+   <form>
+      <label for="name"><b>Search Student:</b></label>
+      <input name="name" id="name" oninput="input_changed()">
+   </form>
 
-   <h1> Welcome to Renert Schools After School Care Website!</h1>
+   <div id="results"></div> 
 
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script>
+      function input_changed() {
+         var q = $("#name").val();
+         console.log("Searching for: ", q);
+         $.get("/search", { q: q }, got_results);
+      }
+
+      function got_results(data) {
+         console.log("Got results: ", data);
+      }
+   </script>
 {% endblock %}
