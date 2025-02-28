@@ -32,14 +32,15 @@ app.jinja_env.globals['now'] = datetime.now
 def index():
     return render_template("index.html")
 
-@app.route('/search')
+@app.route('/check_student')
 @login_required
 @permission_required("afterschool")
-def search():
-    query = request.args.get('q')  
-    if query:
-        return query
-    return ""  
+def do_check_student():
+    query = request.args.get('q')
+    students = Student.query.filter(Student.name.ilike(f"%{query}%")).all()
+    student_list = [{"id": s.id, "name": s.name} for s in students]
+    return json.dumps(student_list)
+
 
 @app.route('/about')
 @login_required

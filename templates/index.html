@@ -1,6 +1,20 @@
 {% extends "layout.html" %}
 
 {% block content %}
+   <style>
+      .student-button {
+         display: block;
+         width: 100%;
+         padding: 10px;
+         margin: 5px 0;
+         border: none;
+         border-radius: 5px;
+         cursor: pointer;
+      }
+      .student-button:hover {
+         background-color: #0056b3;
+      }
+   </style>
    <h1>Welcome to Renert School's Afterschool Website!</h1>
    <form>
       <label for="name"><b>Search Student:</b></label>
@@ -13,12 +27,30 @@
    <script>
       function input_changed() {
          var q = $("#name").val();
-         console.log("Searching for: ", q);
-         $.get("/search", { q: q }, got_results);
+         $.ajax({
+            url: "/check_student",
+            data: { "q": q },
+            success: function(data) {
+                  console.log("Searching for: ", q);
+                  got_results(data);
+            }
+         });
       }
 
       function got_results(data) {
-         console.log("Got results: ", data);
+         var results = $("#results");
+         results.empty();  
+
+         data = JSON.parse(data); 
+
+         data.forEach(student => {
+            let button = $(`<button class="student-button">${student.name}</button>`);
+            button.click(() => {
+                  alert("You clicked on " + student.name);
+            });
+            results.append(button);
+         });
       }
+
    </script>
 {% endblock %}
