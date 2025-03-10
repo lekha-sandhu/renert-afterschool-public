@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css" />
+<script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
+        <style>
+            table {
+                border: 1px solid green;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+            th, td {
+                border: 1px solid white;
+                padding: 10px;
+                text-align: center;
+            }
+            th {
+                background-color: white;
+            }
+            h1 {
+                margin-bottom: 20px;
+            }
+            a {
+                text-decoration: none;
+                color: white;
+            }
+        </style>
+{% endblock %}
+
+{% block content %}
+
+    <body class="container mt-4">
+
+        <h1 class="text-center">Manage Afterschool Classes</h1>
+        {% set today = ["Mon", "Tue", "Wed", "Thu", "Friday", "Sat", "Sun"][now().weekday()] %}
+        <table id="my_table" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Activity</th>
+                    <th>Weekdays</th>
+                    <th>Instructor</th>
+                    <th>Room</th>
+                    <th>Grades</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            {% for c in all_classes|sort(attribute='weekdays', reverse=false) %}
+                <tr class="{% if not c.active %}table-danger text-muted{% endif %}">
+                    <td class="{% if not c.active %}text-muted{% endif %}">{{ c.activity }}</td>
+                    <td class="{% if not c.active %}text-muted{% endif %}">{{ c.weekdays }}</td>
+                    <td class="{% if not c.active %}text-muted{% endif %}">{{ c.instructor }}</td>
+                    <td class="{% if not c.active %}text-muted{% endif %}">{{ c.room }}</td>
+                    <td class="{% if not c.active %}text-muted{% endif %}">{{ c.grades }}</td>
+                    <td>
+                        {% if not c.active %}
+                            <a href="/enable_class/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
+                                Enable
+                            </a>
+                        {% else %}
+                            <a href="/disable_class/{{ c.afterschool_class_id }}" class="btn btn-danger btn-sm">
+                                Disable
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+
+
+            </tbody>
+            <script>
+                $(document).ready( function () {
+                $('#my_table').DataTable({ "paging": false});
+                } );
+            </script>
+        </table>
+    </body>
+
+{% endblock %}
