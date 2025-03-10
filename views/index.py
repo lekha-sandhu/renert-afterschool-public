@@ -58,9 +58,8 @@ def new_afterschool_class():
 @login_required
 @permission_required("afterschool")
 def list_all_classes():
-    a = AfterschoolClass.query.all()
-    print(a)
-    return render_template("list-classes.html", all_classes=a)
+    active_classes = AfterschoolClass.query.filter_by(active=True).all()
+    return render_template("list-classes.html", active_classes=active_classes)
 
 
 @app.route('/process_new_afterschool_class', methods=["POST"])
