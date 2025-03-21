@@ -37,8 +37,8 @@ def index():
 @permission_required("afterschool")
 def do_check_student():
     query = request.args.get('q')
-    students = Student.query.filter(Student.name.ilike(f"%{query}%")).all()
-    student_list = [{"id": s.id, "name": s.name} for s in students]
+    students = Student.query.filter(Student.name.ilike(f"%{query}%")).order_by(Student.name).all()
+    student_list = [{"id": s.id, "name": s.name, "grade": s.grade} for s in students]
     return json.dumps(student_list)
 
 
@@ -195,4 +195,4 @@ def sign_out_all_students():
         db.session.add(student)
 
     db.session.commit()
-    return redirect("/manage_class/" + str(class_id))
+    return redirect("/manage_class/" + str(class_id)) 

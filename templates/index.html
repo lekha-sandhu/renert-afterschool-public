@@ -1,5 +1,14 @@
 {% extends "layout.html" %}
 
+{% block head %}
+<head>
+   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</head>
+
+{% endblock %}
+
 {% block content %}
    <style>
       .student-button {
@@ -16,14 +25,15 @@
       }
    </style>
    <h1>Welcome to Renert School's Afterschool Website!</h1>
+
    <form>
       <label for="name"><b>Search Student:</b></label>
-      <input name="name" id="name" oninput="input_changed()">
+      <input name="name" id="name" oninput="input_changed()"> </input>
+
    </form>
 
    <div id="results"></div> 
 
-   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
    <script>
       function input_changed() {
          var q = $("#name").val();
@@ -34,6 +44,7 @@
                   console.log("Searching for: ", q);
                   got_results(data);
             }
+
          });
       }
 
@@ -44,13 +55,21 @@
          data = JSON.parse(data); 
 
          data.forEach(student => {
-            let button = $(`<button class="student-button">${student.name}</button>`);
-            button.click(() => {
+            if (student.grade !== null) {  
+               let button = $(`<button class="student-button">${student.name} (Grade ${student.grade})</button>`);
+
+               button.click(() => {
                   alert("You clicked on " + student.name);
-            });
-            results.append(button);
+               });
+
+               results.append(button);
+            }
          });
       }
-
    </script>
-{% endblock %}
+     
+   <script>
+       $(document).ready(function() {
+      });
+   </script>
+{% endblock %} 
