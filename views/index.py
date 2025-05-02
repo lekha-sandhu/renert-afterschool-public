@@ -39,7 +39,37 @@ def do_check_student():
     query = request.args.get('q')
     students = Student.query.filter(Student.name.ilike(f"%{query}%")).order_by(Student.name).all()
     student_list = [{"id": s.id, "name": s.name, "grade": s.grade} for s in students]
+
+    sql = """
+    select
+    *
+    from
+    library_students
+    
+    left join
+    afterschool_signins
+    on
+    library_students.id = afterschool_signins.student_id
+    and
+    afterschool_signins.sign_in_date_cache = '2025-04-03'
+
+    left join
+    afterschool_classes
+    on
+    afterschool_signins.afterschool_class_id = afterschool_classes.afterschool_class_id
+
+    where
+    library_students.name ilike '%aman%'
+    order by
+    name ;
+    """
+
+    student_list2 = db.session.execute( text(sql) )
+    student_list2 = [x._asdict() for x in student_list2]
+    pprint(student_list2)
+    
     return json.dumps(student_list)
+
 
 
 @app.route('/about')

@@ -29,8 +29,7 @@
    <form>
       <label for="name"><b>Search Student:</b></label>
       <input name="name" id="name" oninput="input_changed()"> </input>
-
-   </form>
+   </form> 
 
    <div id="results"></div> 
 
@@ -56,10 +55,11 @@
 
          data.forEach(student => {
             if (student.grade !== null) {  
-               let button = $(`<button class="student-button">${student.name} (Grade ${student.grade})</button>`);
-
+               let classInfo = student.class_name ? `Signed into: ${student.class_name}` : "Not signed into any class";
+               let button = $(`<button class="student-button">${student.name} (Grade ${student.grade}) - ${classInfo}</button>`);
+            
                button.click(() => {
-                  alert("You clicked on " + student.name);
+                  alert(`Student: ${student.name}\nGrade: ${student.grade}\n${classInfo}`);
                });
 
                results.append(button);
@@ -72,4 +72,4 @@
        $(document).ready(function() {
       });
    </script>
-{% endblock %} 
+{% endblock %}  

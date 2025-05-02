@@ -46,6 +46,7 @@ from models.afterschool_signins import AfterschoolSignin
 from models.members import Member
 from models.login_users import LoginUser
 from models.permissions import Permission,Role,RoleToPermission,LoginUserToRole,permission_required
+from models.afterschool_enrollment import AfterschoolEnrollment
 
 with app.app_context():
     db.create_all()
