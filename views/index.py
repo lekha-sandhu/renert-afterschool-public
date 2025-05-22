@@ -15,6 +15,7 @@ from root import app,db
 from models.students import Student
 from models.afterschool_classes import AfterschoolClass
 from models.afterschool_signins import AfterschoolSignin
+from models.afterschool_enrollment import AfterschoolEnrollment
 from flask_login import login_required
 from models.permissions import permission_required
 
@@ -69,8 +70,6 @@ def do_check_student():
     pprint(student_list2)
     
     return json.dumps(student_list)
-
-
 
 @app.route('/about')
 @login_required
@@ -170,7 +169,6 @@ def manage_class(afterschool_class_id):
     return render_template("manage_class.html", afterschool_class=c, students=students_signed_in, students_grade=available_students)
 
 
-
 @app.route("/sign_in_student", methods=["POST"])
 @login_required
 @permission_required("afterschool")
@@ -227,3 +225,43 @@ def sign_out_all_students():
 
     db.session.commit()
     return redirect("/manage_class/" + str(class_id)) 
+
+@app.route("/manage_enrollments/<int:afterschool_class_id>")
+@login_required
+@permission_required("afterschool")
+def manage_enrollments(afterschool_class_id):
+    afterschool_activity = AfterschoolClass.query.get(afterschool_class_id)
+    valid_grades = afterschool_activity.grades.split(',')
+    valid_students_for_enrollment = []
+    for grade in valid_grades:
+        valid_students_for_enrollment += Student.query.filter_by(grade=grade).order_by(Student.name).all()
+    
+    #enrollments = AfterschoolEnrollment.query.filter(afterschool_class_id = afterschool_class_id).all()
+    #valid_students_for_enrollment = Student.query.filter(Student.grade = the grades that the activity allows).all()
+
+
+    return render_template("enrollments.html", afterschool_class=afterschool_activity, valid_students_for_enrollment = valid_students_for_enrollment)
+
+'''
+@app.route("/enroll_student", methods=["POST"])
+@login_required
+@permission_required("afterschool")
+def process_student_sign_in():
+    student_id = request.form.get("student_id")
+    class_id = request.form.get("class_id")
+    startdate = request.form.get("startdate)
+    enddate = request.form.get("enddate)
+
+    print(f"Enrolling student {student_id} to class_id {class_id} with start date = {startdate} and end date = {enddate}")
+
+    new_afterschool_enrollment =  AfterschoolEnrollment(
+        student_id=student_id,
+        afterschool_class_id=class_id,
+        start_date = startdate
+        end_date = enddate
+    )
+    db.session.add(new_afterschool_enrollment)
+    db.session.commit()
+
+    return redirect("/enroll_student/"+str(class_id))
+'''

@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+
+{% block head %}
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+        <link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css" />
+        <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
+
+        <style>
+            table {
+                width: 100%;
+                margin-top: 10px;
+                border-collapse: collapse;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: center;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+            h1, h2 {
+                margin-bottom: 10px;
+            }
+            form {
+                margin-bottom: 20px;
+            }
+        </style>
+{% endblock %}
+
+{% block content %}
+
+    <body class="container mt-4">
+        <h1>Managing Enrollments for: {{ afterschool_class.activity }}</h1>
+        <h2>Instructor: {{ afterschool_class.instructor.name }}</h2>
+        <h2>Room: {{ afterschool_class.room }} | Grades: {{ afterschool_class.grades }}</h2>
+
+        <form method="POST" action="/enroll_student" class="d-flex flex-column gap-3">
+
+            <div>
+                <select class="form-control" name = "student_id" id = "student_list">
+                    <option value="">None</option>
+                    {% for student in valid_students_for_enrollment %}
+                        <option value="{{student.id}}">{{student.name}} - {{student.grade}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="startdate">Select a Start Date</label>
+                <input type="date" id="startdate" name="startdate" class="form-control">
+            </div>
+
+            <div>
+                <label for="enddate">Select an End Date</label>
+                <input type="date" id="enddate" name="enddate" class="form-control">
+            </div>
+
+            <input type="hidden" name="class_id" value="{{ afterschool_class.afterschool_class_id }}">
+
+            <button type="submit" class="btn btn-primary">Enroll Student</button>
+        </form>
+
+        <h4 class="mt-4">Enrolled Students</h4>
+        <table id="enrolled_table">
+            <thead>
+
+            </thead>
+
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <script>
+            $(function() {
+                $("#student_list").select2();
+            });
+        </script>
+    </body>
+{% endblock %}
