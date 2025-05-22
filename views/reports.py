@@ -34,7 +34,9 @@ def pick_report():
 @app.route("/report", methods = ["POST"])
 def report():
     student_id = request.form.get("student")
-    date = request.form.get("date")
+    startdate = request.form.get("startdate")
+    enddate = request.form.get("enddate")
+    singlemonthcheck = request.form.get("singledatecheck")
     activity_id = request.form.get("activity")
     student = None
     activity = None
@@ -45,19 +47,49 @@ def report():
     if activity_id == "":
         activity_id = None
            
-    if date == "":
-        date = None
-    
-    if(date is not None):
-        date_list = date.split("-")
-        month = int(date_list[1])
-        year = int(date_list[0])
-        last_days = [31, (29 if year % 4 == 0 else 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-        day = last_days[month-1]
+    if startdate == "":
+        startdate = None
 
-        start_date = datetime(year, month, 1, 0,0,0)
-        
-        end_date = datetime(year, month, day, 23,59,59)
+    if enddate == "":
+        enddate = None
+    
+    print(f"SINGLE MONTH CHECK IS type: {type(singlemonthcheck)} and the state is = {str(singlemonthcheck)}")
+
+    if (startdate is not None):
+            
+        if(singlemonthcheck == "on"):
+            date_list = startdate.split("-")
+            month = int(date_list[1])
+            year = int(date_list[0])
+            last_days = [31, (29 if year % 4 == 0 else 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+            day = last_days[month-1]
+
+            start_date = datetime(year, month, 1, 0,0,0)
+            end_date = datetime(year, month, day, 23,59,59)
+        elif (enddate is None):
+            start_date_list = startdate.split("-")
+            start_month = int(start_date_list[1])
+            start_year = int(start_date_list[0])
+
+            end_month = datetime.today().month
+            end_year = datetime.today().year
+            end_day = datetime.today().day
+            
+            start_date = datetime(start_year, start_month, 1, 0,0,0)
+            end_date = datetime(end_year, end_month, end_day, 23,59,59)
+        else:
+            start_date_list = startdate.split("-")
+            start_month = int(start_date_list[1])
+            start_year = int(start_date_list[0])
+
+            end_date_list = enddate.split("-")
+            end_month = int(end_date_list[1])
+            end_year = int(end_date_list[0])
+            end_last_days = [31, (29 if end_year % 4 == 0 else 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+            end_day = end_last_days[end_month-1]
+            
+            start_date = datetime(start_year, start_month, 1, 0,0,0)
+            end_date = datetime(end_year, end_month, end_day, 23,59,59)
     
     def filters():
         
@@ -70,7 +102,7 @@ def report():
             student = Student.query.filter(Student.id == student_id).all()
             student = student[0]
         
-        if date is not None:
+        if startdate is not None:
             conditions.append(AfterschoolSignin.sign_in_time >= start_date)
             conditions.append(AfterschoolSignin.sign_in_time <= end_date)
         
@@ -163,5 +195,44 @@ def report():
          time_spent = time_spent_for_student(student_id)
     else:
         time_spent = time_spent_for_all()
-    
-    return render_template("report.html", student = student, date = date, activity = activity, signins = signins, class_counter = class_counter, time_spent = time_spent)
+
+    # First, get all class info we need for display
+    class_info = {c.afterschool_class_id: c.activity for c in AfterschoolClass.query.all()}
+
+    # Combine class_counter and time_spent into a single dict
+    combined_data = {}
+
+    # Add sign-in counts
+    for class_id, count in class_counter:
+        combined_data[class_id] = {
+            "count": count,
+            "time": 0  # default to 0 in case no time recorded
+        }
+
+    # Add time data
+    for row in time_spent:
+        if len(row) == 3:
+            _, class_id, total_time = row
+        elif len(row) == 2:
+            class_id, total_time = row
+        else:
+            continue
+
+        if class_id not in combined_data:
+            combined_data[class_id] = {"count": 0, "time": total_time}
+        else:
+            combined_data[class_id]["time"] = total_time
+
+    # Add activity names
+    for class_id in combined_data:
+        combined_data[class_id]["name"] = class_info.get(class_id, "Unknown")
+
+    return render_template(
+        "report.html",
+        student=student,
+        startdate=startdate,
+        enddate=enddate,
+        activity=activity,
+        signins=signins,
+        combined_data=combined_data
+    )
