@@ -41,8 +41,9 @@
         <form method="POST" action="/enroll_student" class="d-flex flex-column gap-3">
 
             <div>
+                Student
                 <select class="form-control" name = "student_id" id = "student_list">
-                    <option value="">None</option>
+                    <option value=""></option>
                     {% for student in valid_students_for_enrollment %}
                         <option value="{{student.id}}">{{student.name}} - {{student.grade}}</option>
                     {% endfor %}
@@ -50,12 +51,12 @@
             </div>
 
             <div>
-                <label for="startdate">Select a Start Date</label>
+                <label for="startdate">Start Date</label>
                 <input type="date" id="startdate" name="startdate" class="form-control">
             </div>
 
             <div>
-                <label for="enddate">Select an End Date</label>
+                <label for="enddate">End Date</label>
                 <input type="date" id="enddate" name="enddate" class="form-control">
             </div>
 
