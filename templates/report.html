@@ -13,13 +13,16 @@
 
 {% block content %}
 
+<div class="container px-3">
+
 <div class="col-6">
 <table class="table table-bordered border-primary">
   <thead>
     <tr>
       <th scope="col">Student Name</th>
       <th scope="col">Student ID Number</th>
-      <th scope="col">Date</th>
+      <th scope="col">Start Date</th>
+      <th scope="col">End Date</th>
       <th scope="col">Activity Name</th>
       <th scope="col">Activity ID</th>
     </tr>
@@ -28,15 +31,14 @@
     <tr>
       <td>{{student.name}}</td>
       <td>{{student.id}}</td>
-      <td>{{date}}</td>
+      <td>{{startdate}}</td>
+      <td>{{enddate}}</td>
       <td>{{activity.activity}}</td>
       <td>{{activity.afterschool_class_id}}</td>
     </tr>
   </tbody>
 </table>
 </div>
-
-
 
   <h1> Signins: </h1>
   <table class="table table-bordered border-primary table-striped">
@@ -71,54 +73,37 @@
     </tbody>
   </table>
 
-  <table class="table table-bordered border-primary">
-    <thead>
-      <tr>
-        <th>Activity ID</th>
-        <th>Count</th>
-      </tr>
-    </thead>
-
-    {% for class_id, class_count in class_counter %}
+<h2>Activity Summary</h2>
+<table class="table table-bordered border-primary">
+  <thead>
     <tr>
-        <td>{{ class_id }}</td>
-        <td>{{ class_count }}</td>
+      <th>Activity Name</th>
+      <th>Activity ID</th>
+      <th>Sign-In Count</th>
+      <th>Total Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for class_id, data in combined_data.items() %}
+    <tr>
+      <td>{{ data.name }}</td>
+      <td>{{ class_id }}</td>
+      <td>{{ data.count }}</td>
+      <td>
+        {% if data.time %}
+          {% set hours = data.time // 3600 %}
+          {% set minutes = (data.time % 3600) // 60 %}
+          {% set seconds = data.time % 60 %}
+          {{ hours }}h {{ minutes }}m {{ seconds }}s
+        {% else %}
+          N/A
+        {% endif %}
+      </td>
     </tr>
     {% endfor %}
-  </table>
+  </tbody>
+</table>
 
-  <table class="table table-bordered border-primary">
-    <thead>
-      <tr>
-        <th>Activity ID</th>
-        <th>Time</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for entry in time_spent %}
-      <tr>
-        {% if entry|length == 3 %}
-          {% set student_id, class_id, total_time = entry %}
-        {% elif entry|length == 2 %}
-          {% set class_id, total_time = entry %}
-          {% set student_id = None %}
-        {% else %}
-          {% set class_id, total_time, student_id = None, None, None %}
-        {% endif %}
-        
-        {% if total_time is not none %}
-          {% set hours = total_time // 3600 %}
-          {% set minutes = (total_time % 3600) // 60 %}
-          {% set seconds = total_time % 60 %}
-          <td>{{ class_id }}</td>
-          <td>{{ hours }}h {{ minutes }}m {{ seconds }}s</td>
-        {% else %}
-          <td>{{ class_id if class_id is not none else 'N/A' }}</td>
-          <td>N/A</td>
-        {% endif %}
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+</div>
   
 {% endblock %}

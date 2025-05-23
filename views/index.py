@@ -15,6 +15,7 @@ from root import app,db
 from models.students import Student
 from models.afterschool_classes import AfterschoolClass
 from models.afterschool_signins import AfterschoolSignin
+from models.afterschool_enrollment import AfterschoolEnrollment
 from flask_login import login_required
 from models.permissions import permission_required
 
@@ -32,14 +33,43 @@ app.jinja_env.globals['now'] = datetime.now
 def index():
     return render_template("index.html")
 
-@app.route('/search')
+@app.route('/check_student')
 @login_required
 @permission_required("afterschool")
-def search():
-    query = request.args.get('q')  
-    if query:
-        return query
-    return ""  
+def do_check_student():
+    query = request.args.get('q')
+    students = Student.query.filter(Student.name.ilike(f"%{query}%")).order_by(Student.name).all()
+    student_list = [{"id": s.id, "name": s.name, "grade": s.grade} for s in students]
+
+    sql = """
+    select
+    *
+    from
+    library_students
+    
+    left join
+    afterschool_signins
+    on
+    library_students.id = afterschool_signins.student_id
+    and
+    afterschool_signins.sign_in_date_cache = '2025-04-03'
+
+    left join
+    afterschool_classes
+    on
+    afterschool_signins.afterschool_class_id = afterschool_classes.afterschool_class_id
+
+    where
+    library_students.name ilike '%aman%'
+    order by
+    name ;
+    """
+
+    student_list2 = db.session.execute( text(sql) )
+    student_list2 = [x._asdict() for x in student_list2]
+    pprint(student_list2)
+    
+    return json.dumps(student_list)
 
 @app.route('/about')
 @login_required
@@ -220,3 +250,39 @@ def sign_out_all_students():
 
     db.session.commit()
     return redirect("/manage_class/" + str(class_id))
+
+@app.route("/manage_enrollments/<int:afterschool_class_id>")
+@login_required
+@permission_required("afterschool")
+def manage_enrollments(afterschool_class_id):
+    afterschool_activity = AfterschoolClass.query.get(afterschool_class_id)
+    valid_grades = afterschool_activity.grades.split(',')
+    valid_students_for_enrollment = []
+    for grade in valid_grades:
+        valid_students_for_enrollment += Student.query.filter_by(grade=grade).order_by(Student.name).all()
+    
+    enrollments = AfterschoolEnrollment.query.filter_by(afterschool_class_id = afterschool_class_id).all()
+
+    return render_template("enrollments.html", afterschool_class=afterschool_activity, valid_students_for_enrollment = valid_students_for_enrollment, enrollments = enrollments)
+
+@app.route("/enroll_student", methods=["POST"])
+@login_required
+@permission_required("afterschool")
+def process_student_enrollment():
+    student_id = request.form.get("student_id")
+    class_id = request.form.get("class_id")
+    startdate = request.form.get("startdate")
+    enddate = request.form.get("enddate")
+
+    print(f"Enrolling student {student_id} to class_id {class_id} with start date = {startdate} and end date = {enddate}")
+
+    new_afterschool_enrollment =  AfterschoolEnrollment(
+        student_id=student_id,
+        afterschool_class_id=class_id,
+        start_date = startdate,
+        end_date = enddate
+    )
+    db.session.add(new_afterschool_enrollment)
+    db.session.commit()
+
+    return redirect("/manage_enrollments/"+str(class_id))

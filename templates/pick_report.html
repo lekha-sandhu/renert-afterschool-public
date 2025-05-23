@@ -6,6 +6,27 @@
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+        <style>
+            h4 {
+                color: rgb(0, 0, 0);
+                font-size: 16px;
+            }
+
+            .checkbox-wrapper {
+                background-color: #b9b9b9;
+                padding: 6px 12px;
+                border-radius: 6px;
+                display: inline-flex;
+                align-items: center;
+                color: rgb(0, 0, 0)
+            }
+            .form-check-input {
+                accent-color: #0d6efd;
+                width: 18px;
+                height: 15px;
+            }
+        </style>
         
 
     </head>
@@ -14,44 +35,61 @@
 
 {% block content %}
 
-<form action = "/report" method = "POST">
+<body>
+    <div class="container mt-5">
+    <h1>Generate Student Report</h1>
 
-    <select class="form-control js-example-basic-single" name = "student">
-        <option value="">Select a student</option>
-        {% for s in student %}
-            <option value="{{s.id}}">{{s.name}}</option>
-        {% endfor %}
-    </select>
+    <form action = "/report" method = "POST">
 
-    <br>
-    <br>
-    <br>
+        <h4>Select a Student</h4>
 
-    <input type="month", name = "date"> </input>
+        <select class="form-control js-example-basic-single" name = "student">
+            <option value="">None</option>
+            {% for s in student %}
+                <option value="{{s.id}}">{{s.name}}</option>
+            {% endfor %}
+        </select>
 
-    <br>
-    <br>
-    <br>
+        <br><br>
 
-    <select class="form-control js-example-basic-single" name = "activity">
-        <option value="">Select an activity</option>
-        {% for a in activity %}
-            <option value="{{a.afterschool_class_id}}">{{a.activity}}</option>
-        {% endfor %}
-    </select>
-    
-    <br>
-    <br>
-    <br>
+        <h4>Select an Activity</h4>
 
-    <button type="submit" class="btn btn-primary">View Report</button>
+        <select class="form-control js-example-basic-single" name = "activity">
+            <option value="">None</option>
+            {% for a in activity %}
+                <option value="{{a.afterschool_class_id}}">{{a.activity}} - {{a.instructor}} - {{a.weekdays}}</option>
+            {% endfor %}
+        </select>
 
-  </form>
+        <br><br>
+
+        <h4>Select a Start Month (Input does not properly work on Firefox browser) </h4>
+
+        <input type="month", name = "startdate"> </input>
+        <label class="checkbox-wrapper">
+            <input class="form-check-input" type="checkbox" name = "singledatecheck">
+            Single Month
+        </label>
+        
+        <br><br>
+
+        <h4>Select a End Month</h4>
+
+        <input type="month", name = "enddate"> </input>
+        
+        <br><br>
+
+        <button type="submit" class="btn btn-primary">View Report</button>
+
+    </form>
 
     <script>
         $(document).ready(function() {
             $('.js-example-basic-single').select2();
         });
     </script>
+    
+    </div>
+    </body>
 
 {% endblock %}
