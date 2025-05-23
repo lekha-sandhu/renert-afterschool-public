@@ -24,6 +24,8 @@ from datetime import datetime
 from datetime import date
 app.jinja_env.globals['now'] = datetime.now
 
+import pytz
+
 
 
 
@@ -197,7 +199,8 @@ def process_student_sign_out():
     student_id = request.form.get("student_id")
     class_id = request.form.get("class_id")
     afterschool_signin_id = request.form.get("afterschool_signin_id")
-    sign_out_time = datetime.now()
+    tz = pytz.timezone('America/Edmonton')
+    sign_out_time = datetime.now(tz)
     
     record = db.session.query(AfterschoolSignin).get(afterschool_signin_id)
         
