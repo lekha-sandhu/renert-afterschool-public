@@ -41,9 +41,10 @@
                     <th>Instructor</th>
                     <th>Room</th>
                     <th>Grades</th>
-                    <th>Action</th>
+                    <th>Sign-in/Sign-Out</th>
+                    <th>Enrollment</th>
                 </tr>
-            </thead>
+            </thead
             <tbody>
             
             {% for c in all_classes|sort(attribute='weekdays', reverse=false) %}
@@ -57,6 +58,11 @@
                     <td>
                         <a href="/manage_class/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
                             Manage Class
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/manage_enrollments/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
+                            Manage Enrollments
                         </a>
                     </td>
                 </tr>
@@ -74,6 +80,11 @@
                     <td>
                         <a href="/manage_class/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
                             Manage Class
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/manage_enrollments/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
+                            Manage Enrollments
                         </a>
                     </td>
                 </tr>
