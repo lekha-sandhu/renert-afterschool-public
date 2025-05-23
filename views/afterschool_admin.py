@@ -13,6 +13,7 @@ from flask_admin.contrib.sqla import filters
 from flask_admin.contrib.sqla.filters import BaseSQLAFilter, FilterEqual
 from flask_admin import BaseView, expose
 from sqlalchemy import and_, or_
+from markupsafe import Markup
 
 import re
 from jinja2.utils import markupsafe
@@ -24,6 +25,12 @@ from hgsc_utils.flask_admin.flask_admin_permission_mixin import RenertAdminPermi
 
 from models.afterschool_classes import AfterschoolClass
 from models.afterschool_signins import AfterschoolSignin
+
+def _format_datetime(dt):
+    return dt.strftime("%Y-%m-%d %I:%M:%S %p").replace(" 0", " ") if dt else None
+
+def _format_time(dt):
+    return dt.strftime("%I:%M:%S %p").lstrip("0") if dt else None
 
 class AfterschoolAdminPermissionMixin(RenertAdminPermissionMixin):
     needed_permission = "afterschool_admin"
@@ -43,6 +50,7 @@ class AfterschoolClassesView(AfterschoolAdminPermissionMixin,ModelView):
         'weekdays',
         'start_time',
         'end_time',
+        'active'
     ]
     column_list = [
         'activity',
@@ -52,6 +60,7 @@ class AfterschoolClassesView(AfterschoolAdminPermissionMixin,ModelView):
         'weekdays',
         'start_time',
         'end_time',
+        'active'
     ]
 
     column_searchable_list = [
@@ -65,6 +74,8 @@ class AfterschoolClassesView(AfterschoolAdminPermissionMixin,ModelView):
     ]
 
     column_formatters = {
+        'start_time': lambda v,c,m,n: _format_time(m.start_time),
+        'end_time': lambda v,c,m,n: _format_time(m.end_time)
     }
 
     column_labels = {
@@ -78,6 +89,7 @@ class AfterschoolClassesView(AfterschoolAdminPermissionMixin,ModelView):
         'weekdays',
         'start_time',
         'end_time',
+        'active'
     ]
 
     column_default_sort = [
@@ -104,6 +116,21 @@ class AfterschoolSigninsView(AfterschoolAdminPermissionMixin,ModelView):
         'sign_in_time',
         'sign_out_time',
         'sign_in_date_cache'
+    ]
+
+    def _format_afterschool_class(view, context, model, name):
+        return Markup(f'<a href="/admin/afterschoolclass/?search={(model.afterschool_class.activity + " " + model.afterschool_class.room).replace(' ', '+')}">{model.afterschool_class.activity} ({model.afterschool_class.room})</a>')
+
+    column_formatters = {
+        'afterschool_class': _format_afterschool_class,
+        'sign_in_time': lambda v,c,m,n: _format_datetime(m.sign_in_time),
+        'sign_out_time': lambda v,c,m,n: _format_datetime(m.sign_out_time)
+    }
+
+    column_exclude_list = [
+        "created_at",
+        "updated_at",
+        "sign_in_date_cache",
     ]
 
     column_default_sort = [
