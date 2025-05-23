@@ -236,32 +236,30 @@ def manage_enrollments(afterschool_class_id):
     for grade in valid_grades:
         valid_students_for_enrollment += Student.query.filter_by(grade=grade).order_by(Student.name).all()
     
-    #enrollments = AfterschoolEnrollment.query.filter(afterschool_class_id = afterschool_class_id).all()
-    #valid_students_for_enrollment = Student.query.filter(Student.grade = the grades that the activity allows).all()
+    enrollments = AfterschoolEnrollment.query.filter_by(afterschool_class_id = afterschool_class_id).all()
 
+    return render_template("enrollments.html", afterschool_class=afterschool_activity, valid_students_for_enrollment = valid_students_for_enrollment, enrollments = enrollments)
 
-    return render_template("enrollments.html", afterschool_class=afterschool_activity, valid_students_for_enrollment = valid_students_for_enrollment)
-
-'''
 @app.route("/enroll_student", methods=["POST"])
 @login_required
 @permission_required("afterschool")
-def process_student_sign_in():
+def process_student_enrollment():
     student_id = request.form.get("student_id")
     class_id = request.form.get("class_id")
-    startdate = request.form.get("startdate)
-    enddate = request.form.get("enddate)
+    startdate = request.form.get("startdate")
+    enddate = request.form.get("enddate")
 
     print(f"Enrolling student {student_id} to class_id {class_id} with start date = {startdate} and end date = {enddate}")
 
     new_afterschool_enrollment =  AfterschoolEnrollment(
         student_id=student_id,
         afterschool_class_id=class_id,
-        start_date = startdate
+        start_date = startdate,
         end_date = enddate
     )
     db.session.add(new_afterschool_enrollment)
     db.session.commit()
 
-    return redirect("/enroll_student/"+str(class_id))
-'''
+    return redirect("/manage_enrollments/"+str(class_id))
+
+

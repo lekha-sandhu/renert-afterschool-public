@@ -9,23 +9,24 @@
 
         <style>
             table {
-                width: 100%;
-                margin-top: 10px;
+                border: 1px solid green;
                 border-collapse: collapse;
+                margin-top: 20px;
             }
             th, td {
-                border: 1px solid #ddd;
-                padding: 8px;
+                border: 1px solid white;
+                padding: 10px;
                 text-align: center;
             }
             th {
-                background-color: #f2f2f2;
+                background-color: white;
             }
-            h1, h2 {
-                margin-bottom: 10px;
-            }
-            form {
+            h1 {
                 margin-bottom: 20px;
+            }
+            a {
+                text-decoration: none;
+                color: white;
             }
         </style>
 {% endblock %}
@@ -64,12 +65,25 @@
         </form>
 
         <h4 class="mt-4">Enrolled Students</h4>
-        <table id="enrolled_table">
+        <table id="my_table" class="table table-bordered">
             <thead>
-
+                <tr>
+                    <th scope="col">Student Name</th>
+                    <th scope="col">Student ID Number</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">End Date</th>
+                </tr>
             </thead>
-
+                {% for afterschool_enrollment in enrollments %}
+                <tr>
+                    <td>{{afterschool_enrollment.student}}</td>
+                    <td>{{afterschool_enrollment.student_id}}</td>
+                    <td>{{afterschool_enrollment.start_date}}</td>
+                    <td>{{afterschool_enrollment.end_date}}</td>
+                </tr>
+                {% endfor %}
             <tbody>
+                
 
             </tbody>
         </table>
@@ -78,6 +92,10 @@
             $(function() {
                 $("#student_list").select2();
             });
+
+            $(document).ready( function () {
+                $('#my_table').DataTable({ "paging": false});
+            } );
         </script>
     </body>
 {% endblock %}
