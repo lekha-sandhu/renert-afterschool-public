@@ -88,9 +88,15 @@ def new_afterschool_class():
 @login_required
 @permission_required("afterschool")
 def list_all_classes():
-    a = AfterschoolClass.query.all()
-    print(a)
-    return render_template("list-classes.html", all_classes=a)
+    active_classes = AfterschoolClass.query.filter_by(active=True).all()
+    return render_template("list-classes.html", active_classes=active_classes)
+
+@app.route("/manage_classes")
+@login_required
+@permission_required("afterschool")
+def manage_classes():
+    all_classes = AfterschoolClass.query.all()
+    return render_template("manage_classes.html", all_classes=all_classes)
 
 
 @app.route('/process_new_afterschool_class', methods=["POST"])
@@ -168,6 +174,25 @@ def manage_class(afterschool_class_id):
 
     return render_template("manage_class.html", afterschool_class=c, students=students_signed_in, students_grade=available_students)
 
+@app.route("/enable_class/<int:afterschool_class_id>")
+@login_required
+@permission_required("afterschool")
+def enable_class(afterschool_class_id):
+    c = AfterschoolClass.query.get(afterschool_class_id)
+    c.active=True
+    db.session.add(c)
+    db.session.commit()
+    return redirect("/manage_classes")
+
+@app.route("/disable_class/<int:afterschool_class_id>")
+@login_required
+@permission_required("afterschool")
+def disable_class(afterschool_class_id):
+    c = AfterschoolClass.query.get(afterschool_class_id)
+    c.active=False
+    db.session.add(c)
+    db.session.commit()
+    return redirect("/manage_classes")
 
 @app.route("/sign_in_student", methods=["POST"])
 @login_required
@@ -224,7 +249,7 @@ def sign_out_all_students():
         db.session.add(student)
 
     db.session.commit()
-    return redirect("/manage_class/" + str(class_id)) 
+    return redirect("/manage_class/" + str(class_id))
 
 @app.route("/manage_enrollments/<int:afterschool_class_id>")
 @login_required
@@ -261,5 +286,3 @@ def process_student_enrollment():
     db.session.commit()
 
     return redirect("/manage_enrollments/"+str(class_id))
-
-

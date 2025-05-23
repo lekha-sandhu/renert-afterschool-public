@@ -47,7 +47,7 @@
             </thead
             <tbody>
             
-            {% for c in all_classes|sort(attribute='weekdays', reverse=false) %}
+            {% for c in active_classes|sort(attribute='weekdays', reverse=false) %}
                 {% if today in c.weekdays %}
                 <tr>
                     <td>{{ c.activity }}</td>
@@ -69,7 +69,7 @@
                 {% endif %}
             {% endfor %}
 
-            {% for c in all_classes|sort(attribute='weekdays', reverse=false) %}
+            {% for c in active_classes|sort(attribute='weekdays', reverse=false) %}
                 {% if today not in c.weekdays %}
                 <tr>
                     <td>{{ c.activity }}</td>
