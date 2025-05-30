@@ -9,3 +9,7 @@ configobj
 sqlalchemy_utils
 flask-shell-ipython
 timeago
+pytz
+psycopg2
+oauthlib
+requests
