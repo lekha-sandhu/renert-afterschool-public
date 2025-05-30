@@ -20,6 +20,7 @@ from models.afterschool_signins import AfterschoolSignin
 import global_settings
 
 from datetime import datetime, timedelta
+import pytz
 
 @app.route("/pick_report")
 def pick_report():
@@ -27,9 +28,6 @@ def pick_report():
     activities = AfterschoolClass.query.all()
     
     return render_template("pick_report.html", student = all_students, activity = activities)
-
-
-
 
 @app.route("/report", methods = ["POST"])
 def report():
@@ -52,8 +50,6 @@ def report():
 
     if enddate == "":
         enddate = None
-    
-    print(f"SINGLE MONTH CHECK IS type: {type(singlemonthcheck)} and the state is = {str(singlemonthcheck)}")
 
     if (startdate is not None):
             
@@ -116,6 +112,12 @@ def report():
     things_to_filter_by, student, activity = filters()
     
     signins = AfterschoolSignin.query.filter(*things_to_filter_by).all()
+
+    for signin in signins:
+        if signin.sign_in_time:
+            signin.sign_in_time = signin.sign_in_time.astimezone(pytz.timezone('America/Edmonton'))
+        if signin.sign_out_time:
+            signin.sign_out_time = signin.sign_out_time.astimezone(pytz.timezone('America/Edmonton'))
     
     def count_by_classes_for_student():
         num_times_that_student_joined_certain_class = db.session.query(          #starts a new SQLAlchemy query on the database session
@@ -128,10 +130,6 @@ def report():
         ).group_by(
             AfterschoolClass.afterschool_class_id  # Group by the class ID
         ).filter(*things_to_filter_by).all()
-
-        # Print the results
-        for class_id, count in num_times_that_student_joined_certain_class:
-            print(f"Class ID: {class_id}, Sign-in Count: {count}")
             
         return num_times_that_student_joined_certain_class
     
@@ -164,9 +162,7 @@ def report():
             AfterschoolClass.afterschool_class_id  # Group by the class ID
         ).filter(*things_to_filter_by).all()
 
-        # Print the results
-        for class_id, count in num_times_that_anyone_joined_certain_class:
-            print(f"Class ID: {class_id}, Sign-in Count: {count}")
+
             
         return num_times_that_anyone_joined_certain_class
     
