@@ -59,11 +59,11 @@
         <td>{{s.afterschool_class.activity}}</td>
         <td>{{s.afterschool_class.afterschool_class_id}}</td>
         <td>{{s.student.name}}</td>
-        <td>{{s.sign_in_time.strftime("%A- %d / %m / %Y")}}
-        <td>{{s.sign_in_time.strftime("%H:%M")}}</td>
+        <td>{{s.sign_in_time.strftime("%A- %d / %m / %Y")}}</td>
+        <td>{{s.sign_in_time.strftime("%#I:%M %p")}}</td>
         <td>
           {% if s.sign_out_time != None %}
-              {{ s.sign_out_time.strftime("%H:%M") }}
+              {{ s.sign_out_time.strftime("%#I:%M %p") }}
           {% else %}
               None
           {% endif %}
