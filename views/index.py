@@ -337,3 +337,18 @@ def process_student_enrollment():
 
     flash("Enrollment successful.", "success")
     return redirect("/manage_enrollments/"+str(class_id))
+
+@app.route("/remove_student_enrollment", methods=["POST"])
+@login_required
+@permission_required("afterschool")
+def process_remove_student_enrollment():
+    class_id = request.form.get("class_id")
+    afterschool_enrollment_id = request.form.get("afterschool_enrollment_id")
+
+    record = db.session.query(AfterschoolEnrollment).get(afterschool_enrollment_id)
+
+    if record:
+        db.session.delete(record)  
+        db.session.commit()    
+
+    return redirect("/manage_enrollments/"+str(class_id))
