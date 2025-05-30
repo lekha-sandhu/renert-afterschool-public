@@ -168,7 +168,12 @@ def manage_class(afterschool_class_id):
     
     signed_in_ids = {s.student_id for s in students_signed_in if not s.sign_out_time}
 
+    filters_for_enrollment = []
+    filters_for_enrollment.append(AfterschoolEnrollment.afterschool_class_id == afterschool_class_id)
+    filters_for_enrollment.append(AfterschoolEnrollment.start_date <= date)
+    filters_for_enrollment.append(AfterschoolEnrollment.end_date >= date)
 
+    enrollment = AfterschoolEnrollment.query.filter(*filters_for_enrollment).all()
     all_students_in_grades = []
     for grade in grades:
         all_students_in_grades += Student.query.filter_by(grade=grade).order_by(Student.name).all()
@@ -204,13 +209,30 @@ def process_student_sign_in():
     student_id = request.form.get("student_id")
     class_id = request.form.get("class_id")
     sign_in_time = datetime.now().astimezone(tz=global_settings.tz)
+    date = datetime.now().date()
+    enrolled = False
+
+    filters_for_enrollment = []
+    filters_for_enrollment.append(AfterschoolEnrollment.student_id == student_id)
+    filters_for_enrollment.append(AfterschoolEnrollment.afterschool_class_id == class_id)
+    filters_for_enrollment.append(AfterschoolEnrollment.start_date <= date)
+    filters_for_enrollment.append(AfterschoolEnrollment.end_date >= date)
+
+    enrollment = AfterschoolEnrollment.query.filter(*filters_for_enrollment).all()
+    if len(enrollment) != 0:
+        enrolled = True
+
+    print(f"enrollment = {enrollment}")
+    
+    print(f"child is enrolled T/F: {enrolled}")
 
     print(f"Signing in student {student_id} to class_id {class_id} at {sign_in_time}")
 
     x =  AfterschoolSignin(
         student_id=student_id,
         afterschool_class_id=class_id,
-        sign_in_time=sign_in_time
+        sign_in_time=sign_in_time,
+        preenrolled = enrolled
     )
     db.session.add(x)
     db.session.commit()

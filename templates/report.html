@@ -50,6 +50,7 @@
         <th>Date</th>
         <th>Sign in Time</th>
         <th>Sign out time</th>
+        <th>Enrolled</th>
       </tr>
     </thead>
 
@@ -67,7 +68,8 @@
           {% else %}
               None
           {% endif %}
-      </td>
+        </td>
+        <td>{% if s.preenrolled%} &check; {% endif %}</td> 
       </tr>
       {% endfor %}
     </tbody>
