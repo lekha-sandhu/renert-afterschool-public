@@ -26,7 +26,8 @@ app.jinja_env.globals['now'] = datetime.now
 
 import pytz
 
-
+#apparently needed to use flask flash()
+app.secret_key = "some_secret_key"
 
 
 @app.route('/')
@@ -277,8 +278,32 @@ def process_student_enrollment():
     startdate = request.form.get("startdate")
     enddate = request.form.get("enddate")
 
-    print(f"Enrolling student {student_id} to class_id {class_id} with start date = {startdate} and end date = {enddate}")
+    def convert_to_datetime_obj(date):
+        return datetime.strptime(date, "%Y-%m-%d").date()
 
+    def check_for_overlap_with_existing_enrollment(existing_start_date, existing_end_date):
+        if not(datetime_new_end < existing_start_date or datetime_new_start > existing_end_date):
+            return True #overlap deteced
+        return False #overlap not found
+
+    datetime_new_start = convert_to_datetime_obj(startdate)
+    datetime_new_end = convert_to_datetime_obj(enddate)
+
+    #checks if the new start date is before the new end date and returns flash and redirect to main enrollment page
+    if datetime_new_start > datetime_new_end:
+        flash("ERROR: Enrollment not added - End Date is before Start Date." , "danger")
+        return redirect("/manage_enrollments/" + str(class_id))
+
+    #queries all the existing student's enrollments
+    all_student_enrollments =  AfterschoolEnrollment.query.filter_by(student_id = student_id).all()
+
+    #checks if there's an overlap and returns flash() message and redirects to main enrollment page
+    for enrollment in all_student_enrollments:
+        if check_for_overlap_with_existing_enrollment(enrollment.start_date, enrollment.end_date):
+            flash("ERROR: Enrollment not added - New Enrollment Dates overlap with an existing Enrollment.", "danger")
+            return redirect("/manage_enrollments/" + str(class_id))
+    
+    #if we got to this point, the enrollment should be valid and it adds to database and redirects with no flash()
     new_afterschool_enrollment =  AfterschoolEnrollment(
         student_id=student_id,
         afterschool_class_id=class_id,
@@ -288,4 +313,5 @@ def process_student_enrollment():
     db.session.add(new_afterschool_enrollment)
     db.session.commit()
 
+    flash("Enrollment successful.", "success")
     return redirect("/manage_enrollments/"+str(class_id))

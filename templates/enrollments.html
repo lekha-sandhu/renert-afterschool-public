@@ -28,10 +28,12 @@
                 text-decoration: none;
                 color: white;
             }
+        
         </style>
 {% endblock %}
 
 {% block content %}
+
 
     <body class="container mt-4">
         <h1>Managing Enrollments for: {{ afterschool_class.activity }}</h1>
@@ -42,7 +44,7 @@
 
             <div>
                 Student
-                <select class="form-control" name = "student_id" id = "student_list">
+                <select class="form-control" name = "student_id" id = "student_list" required>
                     <option value=""></option>
                     {% for student in valid_students_for_enrollment %}
                         <option value="{{student.id}}">{{student.name}} - {{student.grade}}</option>
@@ -52,17 +54,28 @@
 
             <div>
                 <label for="startdate">Start Date</label>
-                <input type="date" id="startdate" name="startdate" class="form-control">
+                <input type="date" id="startdate" name="startdate" class="form-control" required>
             </div>
 
             <div>
                 <label for="enddate">End Date</label>
-                <input type="date" id="enddate" name="enddate" class="form-control">
+                <input type="date" id="enddate" name="enddate" class="form-control" required>
             </div>
 
             <input type="hidden" name="class_id" value="{{ afterschool_class.afterschool_class_id }}">
 
             <button type="submit" class="btn btn-primary">Enroll Student</button>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+
         </form>
 
         <h4 class="mt-4">Enrolled Students</h4>
