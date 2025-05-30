@@ -24,6 +24,9 @@ class AfterschoolSignin(db.Model, TimestampMixin):
     # truncating the sign-in timestamp to date (for quicker indexing and querying)
     sign_in_date_cache = db.Column(db.Date,Computed(text("sign_in_time")),nullable=False,index=True)
 
+    preenrolled = db.Column(db.Boolean, nullable=False, default=False)
+
+
     __table_args__ = (
         ## Sign-out time must be AFTER sign-in time
         db.CheckConstraint(text("""
