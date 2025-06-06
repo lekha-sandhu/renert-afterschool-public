@@ -168,12 +168,6 @@ def manage_class(afterschool_class_id):
     
     signed_in_ids = {s.student_id for s in students_signed_in if not s.sign_out_time}
 
-    filters_for_enrollment = []
-    filters_for_enrollment.append(AfterschoolEnrollment.afterschool_class_id == afterschool_class_id)
-    filters_for_enrollment.append(AfterschoolEnrollment.start_date <= date)
-    filters_for_enrollment.append(AfterschoolEnrollment.end_date >= date)
-
-    enrollment = AfterschoolEnrollment.query.filter(*filters_for_enrollment).all()
     all_students_in_grades = []
     for grade in grades:
         all_students_in_grades += Student.query.filter_by(grade=grade).order_by(Student.name).all()
