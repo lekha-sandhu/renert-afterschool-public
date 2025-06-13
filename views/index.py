@@ -41,11 +41,6 @@ def index():
 @permission_required("afterschool")
 def do_check_student():
     query = request.args.get('q')
-    name = request.args.get('name')
-    if name:
-        name_filter = name
-    else:
-        name_filter = f"%{query.replace(" ", "%")}%"
 
     today = date.today()
     subquery = (
@@ -77,7 +72,7 @@ def do_check_student():
             AfterschoolClass.afterschool_class_id == AfterschoolSignin.afterschool_class_id,
             isouter=True,
         )
-        .filter(Student.name.ilike(name_filter))
+        .filter(Student.name.ilike(f"%{query}%"))
         .order_by(Student.name)
         .all()
     )
