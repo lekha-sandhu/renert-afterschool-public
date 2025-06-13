@@ -26,7 +26,6 @@ class AfterschoolSignin(db.Model, TimestampMixin):
 
     preenrolled = db.Column(db.Boolean, nullable=False, default=False)
 
-
     __table_args__ = (
         ## Sign-out time must be AFTER sign-in time
         db.CheckConstraint(text("""
