@@ -41,38 +41,62 @@ def index():
 @permission_required("afterschool")
 def do_check_student():
     query = request.args.get('q')
-    students = Student.query.filter(Student.name.ilike(f"%{query}%")).order_by(Student.name).all()
-    student_list = [{"id": s.id, "name": s.name, "grade": s.grade} for s in students]
+    name = request.args.get('name')
+    if name:
+        name_filter = name
+    else:
+        name_filter = f"%{query.replace(" ", "%")}%"
 
-    sql = """
-    select
-    *
-    from
-    library_students
+    today = date.today()
+    subquery = (
+        db.session.query(
+            AfterschoolSignin.student_id,
+            func.max(
+                func.coalesce(AfterschoolSignin.sign_out_time, AfterschoolSignin.sign_in_time)
+            ).label("latest_signin_time")
+        )
+        .filter(AfterschoolSignin.sign_in_date_cache == today)
+        .group_by(AfterschoolSignin.student_id)
+        .subquery()
+    )
+
+    s2: list[tuple[Student, AfterschoolSignin, AfterschoolClass]] = (
+        db.session.query(Student, AfterschoolSignin, AfterschoolClass)
+        .join(subquery, (subquery.c.student_id == Student.id), isouter=True)
+        .join(
+            AfterschoolSignin,
+            (AfterschoolSignin.student_id == subquery.c.student_id)
+            & (
+                func.coalesce(AfterschoolSignin.sign_out_time, AfterschoolSignin.sign_in_time)
+                == subquery.c.latest_signin_time
+            ),
+            isouter=True,
+        )
+        .join(
+            AfterschoolClass,
+            AfterschoolClass.afterschool_class_id == AfterschoolSignin.afterschool_class_id,
+            isouter=True,
+        )
+        .filter(Student.name.ilike(name_filter))
+        .order_by(Student.name)
+        .all()
+    )
+
+    display_data = []
+    for student, signin, afterschool_class in s2:
+        record_info = {}
+        record_info["name"] = student.name
+        record_info["grade"] = student.grade
+        record_info["signin"] = {
+            "sign_in_time": signin.sign_in_time.strftime("%Y-%m-%d %H:%M:%S") if signin.sign_in_time else None,
+            "sign_out_time": signin.sign_out_time.strftime("%Y-%m-%d %H:%M:%S") if signin.sign_out_time else None,
+            "class_name": afterschool_class.activity if afterschool_class else None
+        } if signin else None
+        display_data.append(record_info)
     
-    left join
-    afterschool_signins
-    on
-    library_students.id = afterschool_signins.student_id
-    and
-    afterschool_signins.sign_in_date_cache = '2025-04-03'
-
-    left join
-    afterschool_classes
-    on
-    afterschool_signins.afterschool_class_id = afterschool_classes.afterschool_class_id
-
-    where
-    library_students.name ilike '%aman%'
-    order by
-    name ;
-    """
-
-    student_list2 = db.session.execute( text(sql) )
-    student_list2 = [x._asdict() for x in student_list2]
-    pprint(student_list2)
+    #pprint(display_data)
     
-    return json.dumps(student_list)
+    return json.dumps(display_data)
 
 @app.route('/about')
 @login_required
