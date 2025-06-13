@@ -26,7 +26,8 @@ app.jinja_env.globals['now'] = datetime.now
 
 import pytz
 
-
+#apparently needed to use flask flash()
+app.secret_key = "some_secret_key"
 
 
 @app.route('/')
@@ -40,38 +41,57 @@ def index():
 @permission_required("afterschool")
 def do_check_student():
     query = request.args.get('q')
-    students = Student.query.filter(Student.name.ilike(f"%{query}%")).order_by(Student.name).all()
-    student_list = [{"id": s.id, "name": s.name, "grade": s.grade} for s in students]
 
-    sql = """
-    select
-    *
-    from
-    library_students
+    today = date.today()
+    subquery = (
+        db.session.query(
+            AfterschoolSignin.student_id,
+            func.max(
+                func.coalesce(AfterschoolSignin.sign_out_time, AfterschoolSignin.sign_in_time)
+            ).label("latest_signin_time")
+        )
+        .filter(AfterschoolSignin.sign_in_date_cache == today)
+        .group_by(AfterschoolSignin.student_id)
+        .subquery()
+    )
+
+    s2: list[tuple[Student, AfterschoolSignin, AfterschoolClass]] = (
+        db.session.query(Student, AfterschoolSignin, AfterschoolClass)
+        .join(subquery, (subquery.c.student_id == Student.id), isouter=True)
+        .join(
+            AfterschoolSignin,
+            (AfterschoolSignin.student_id == subquery.c.student_id)
+            & (
+                func.coalesce(AfterschoolSignin.sign_out_time, AfterschoolSignin.sign_in_time)
+                == subquery.c.latest_signin_time
+            ),
+            isouter=True,
+        )
+        .join(
+            AfterschoolClass,
+            AfterschoolClass.afterschool_class_id == AfterschoolSignin.afterschool_class_id,
+            isouter=True,
+        )
+        .filter(Student.name.ilike(f"%{query}%"))
+        .order_by(Student.name)
+        .all()
+    )
+
+    display_data = []
+    for student, signin, afterschool_class in s2:
+        record_info = {}
+        record_info["name"] = student.name
+        record_info["grade"] = student.grade
+        record_info["signin"] = {
+            "sign_in_time": signin.sign_in_time.strftime("%Y-%m-%d %H:%M:%S") if signin.sign_in_time else None,
+            "sign_out_time": signin.sign_out_time.strftime("%Y-%m-%d %H:%M:%S") if signin.sign_out_time else None,
+            "class_name": afterschool_class.activity if afterschool_class else None
+        } if signin else None
+        display_data.append(record_info)
     
-    left join
-    afterschool_signins
-    on
-    library_students.id = afterschool_signins.student_id
-    and
-    afterschool_signins.sign_in_date_cache = '2025-04-03'
-
-    left join
-    afterschool_classes
-    on
-    afterschool_signins.afterschool_class_id = afterschool_classes.afterschool_class_id
-
-    where
-    library_students.name ilike '%aman%'
-    order by
-    name ;
-    """
-
-    student_list2 = db.session.execute( text(sql) )
-    student_list2 = [x._asdict() for x in student_list2]
-    pprint(student_list2)
+    #pprint(display_data)
     
-    return json.dumps(student_list)
+    return json.dumps(display_data)
 
 @app.route('/about')
 @login_required
@@ -174,6 +194,10 @@ def manage_class(afterschool_class_id):
 
     enrolled_students = AfterschoolEnrollment.query.filter(*filters_for_enrollment).all()
 
+    all_students_in_grades = []
+    for grade in grades:
+        all_students_in_grades += Student.query.filter_by(grade=grade).order_by(Student.name).all()
+
     students_grade = Student.query.filter(Student.grade.in_(grades)).order_by(Student.name).all()
 
     return render_template(
@@ -210,6 +234,22 @@ def process_student_sign_in():
     student_id = request.form.get("student_id")
     class_id = request.form.get("class_id")
     sign_in_time = datetime.now().astimezone(tz=global_settings.tz)
+    date = datetime.now().date()
+    enrolled = False
+
+    filters_for_enrollment = []
+    filters_for_enrollment.append(AfterschoolEnrollment.student_id == student_id)
+    filters_for_enrollment.append(AfterschoolEnrollment.afterschool_class_id == class_id)
+    filters_for_enrollment.append(AfterschoolEnrollment.start_date <= date)
+    filters_for_enrollment.append(AfterschoolEnrollment.end_date >= date)
+
+    enrollment = AfterschoolEnrollment.query.filter(*filters_for_enrollment).all()
+    if len(enrollment) != 0:
+        enrolled = True
+
+    print(f"enrollment = {enrollment}")
+    
+    print(f"child is enrolled T/F: {enrolled}")
 
     
     print(f"Signing in student {student_id} to class_id {class_id} at {sign_in_time}")
@@ -217,7 +257,8 @@ def process_student_sign_in():
     x =  AfterschoolSignin(
         student_id=student_id,
         afterschool_class_id=class_id,
-        sign_in_time=sign_in_time
+        sign_in_time=sign_in_time,
+        preenrolled = enrolled
     )
     db.session.add(x)
     db.session.commit()
@@ -285,8 +326,32 @@ def process_student_enrollment():
     startdate = request.form.get("startdate")
     enddate = request.form.get("enddate")
 
-    print(f"Enrolling student {student_id} to class_id {class_id} with start date = {startdate} and end date = {enddate}")
+    def convert_to_datetime_obj(date):
+        return datetime.strptime(date, "%Y-%m-%d").date()
 
+    def check_for_overlap_with_existing_enrollment(existing_start_date, existing_end_date):
+        if not(datetime_new_end < existing_start_date or datetime_new_start > existing_end_date):
+            return True #overlap deteced
+        return False #overlap not found
+
+    datetime_new_start = convert_to_datetime_obj(startdate)
+    datetime_new_end = convert_to_datetime_obj(enddate)
+
+    #checks if the new start date is before the new end date and returns flash and redirect to main enrollment page
+    if datetime_new_start > datetime_new_end:
+        flash("ERROR: Enrollment not added - End Date is before Start Date." , "danger")
+        return redirect("/manage_enrollments/" + str(class_id))
+
+    #queries all the existing student's enrollments
+    all_student_enrollments =  AfterschoolEnrollment.query.filter_by(student_id = student_id).all()
+
+    #checks if there's an overlap and returns flash() message and redirects to main enrollment page
+    for enrollment in all_student_enrollments:
+        if check_for_overlap_with_existing_enrollment(enrollment.start_date, enrollment.end_date):
+            flash("ERROR: Enrollment not added - New Enrollment Dates overlap with an existing Enrollment.", "danger")
+            return redirect("/manage_enrollments/" + str(class_id))
+    
+    #if we got to this point, the enrollment should be valid and it adds to database and redirects with no flash()
     new_afterschool_enrollment =  AfterschoolEnrollment(
         student_id=student_id,
         afterschool_class_id=class_id,
@@ -296,6 +361,7 @@ def process_student_enrollment():
     db.session.add(new_afterschool_enrollment)
     db.session.commit()
 
+    flash("Enrollment successful.", "success")
     return redirect("/manage_enrollments/"+str(class_id))
 
 @app.route("/remove_student_enrollment", methods=["POST"])

@@ -55,7 +55,15 @@
 
          data.forEach(student => {
             if (student.grade !== null) {  
-               let classInfo = student.class_name ? `Signed into: ${student.class_name}` : "Not signed into any class";
+               let classInfo
+               if (student.signin && student.signin.sign_out_time) {
+                  classInfo = `Signed out of ${student.signin.class_name} at ${student.signin.sign_out_time}`;
+               } else if (student.signin && student.signin.sign_in_time) {
+                  classInfo = `In ${student.signin.class_name} since ${student.signin.sign_in_time}`;
+               } else {
+                  classInfo = "No activity today";
+               }
+
                let button = $(`<button class="student-button">${student.name} (Grade ${student.grade}) - ${classInfo}</button>`);
             
                button.click(() => {
