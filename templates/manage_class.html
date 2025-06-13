@@ -49,6 +49,31 @@
             <button type="submit" class="btn btn-primary">Sign-in Student</button>
         </form>
 
+        {% if enrolled_students %}
+        <table id="sign_in_enrollments">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Sign In</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in enrolled_students %}
+                    <tr>
+                        <td>{{ e.student }}</td>
+                        <td>
+                            <form method="POST" action="/sign_in_student" class="d-flex align-items-center gap-3">
+                                <input type="hidden" name="student_id" value="{{ e.student_id }}">
+                                <input type="hidden" name="class_id" value="{{ afterschool_class.afterschool_class_id }}">
+                                <button type="submit" class="btn btn-primary">Sign-in</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
         <h4 class="mt-4">Present Students</h4>
         <table id="sign_in_table">
             <thead>

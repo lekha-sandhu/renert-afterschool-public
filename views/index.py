@@ -187,13 +187,25 @@ def manage_class(afterschool_class_id):
     
     signed_in_ids = {s.student_id for s in students_signed_in if not s.sign_out_time}
 
+    filters_for_enrollment = []
+    filters_for_enrollment.append(AfterschoolEnrollment.afterschool_class_id == afterschool_class_id)
+    filters_for_enrollment.append(AfterschoolEnrollment.start_date <= today)
+    filters_for_enrollment.append(AfterschoolEnrollment.end_date >= today)
+
+    enrolled_students = AfterschoolEnrollment.query.filter(*filters_for_enrollment).all()
+
     all_students_in_grades = []
     for grade in grades:
         all_students_in_grades += Student.query.filter_by(grade=grade).order_by(Student.name).all()
 
-    available_students = [s for s in all_students_in_grades if s.id not in signed_in_ids]
+    students_grade = Student.query.filter(Student.grade.in_(grades)).order_by(Student.name).all()
 
-    return render_template("manage_class.html", afterschool_class=c, students=students_signed_in, students_grade=available_students)
+    return render_template(
+            "manage_class.html",
+            afterschool_class=c,
+            students=students_signed_in,
+            students_grade=students_grade,
+            enrolled_students=enrolled_students)
 
 @app.route("/enable_class/<int:afterschool_class_id>")
 @login_required
@@ -239,6 +251,7 @@ def process_student_sign_in():
     
     print(f"child is enrolled T/F: {enrolled}")
 
+    
     print(f"Signing in student {student_id} to class_id {class_id} at {sign_in_time}")
 
     x =  AfterschoolSignin(
