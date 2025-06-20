@@ -37,42 +37,51 @@
         <h2>Instructor: {{ afterschool_class.instructor.name }}</h2>
         <h2>Room: {{ afterschool_class.room }} | Grades: {{ afterschool_class.grades }}</h2>
 
-        <form method="POST" action="/sign_in_student" class="d-flex align-items-center gap-3">
-            <label for="student_list" class="me-2">Select Student:</label>
-            <select id="student_list" class="form-select w-25" name="student_id">
+        <div class="row">
+            <div class="col-md-6">
+            <h1>Sign-in a new student:</h1>
+            <p>Choose any student from grades {{ afterschool_class.grades }}:</p>
+            <form method="POST" action="/sign_in_student" class="d-flex align-items-center gap-3">
+                <label for="student_list" class="me-2">Select Student:</label>
+                <select id="student_list" class="form-select w-75" name="student_id">
                 <option selected disabled>Choose...</option>
                 {% for s in students_grade %}
                     <option value="{{ s.id }}">{{ s.name }} (Gr. {{ s.grade }})</option>
                 {% endfor %}
-            </select>
-            <input type="hidden" name="class_id" value="{{ afterschool_class.afterschool_class_id }}">
-            <button type="submit" class="btn btn-primary">Sign-in Student</button>
-        </form>
-
-        {% if enrolled_students %}
-        <table id="sign_in_enrollments">
-            <thead>
+                </select>
+                <input type="hidden" name="class_id" value="{{ afterschool_class.afterschool_class_id }}">
+                <button type="submit" class="btn btn-primary">Sign-in Student</button>
+            </form>
+            </div>
+            <div class="col-md-6">
+            <h1>Pre-enrolled Students:</h1>
+            <a href="/manage_enrollments/{{ afterschool_class.afterschool_class_id }}" class="btn btn-secondary mt-3">Manage Enrollments</a>
+            {% if enrolled_students %}
+            <table id="sign_in_enrollments" class="table table-bordered">
+                <thead>
                 <tr>
                     <th>Student Name</th>
                     <th>Sign In</th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 {% for e in enrolled_students %}
                     <tr>
-                        <td>{{ e.student }}</td>
-                        <td>
-                            <form method="POST" action="/sign_in_student" class="d-flex align-items-center gap-3">
-                                <input type="hidden" name="student_id" value="{{ e.student_id }}">
-                                <input type="hidden" name="class_id" value="{{ afterschool_class.afterschool_class_id }}">
-                                <button type="submit" class="btn btn-primary">Sign-in</button>
-                            </form>
-                        </td>
+                    <td>{{ e.student }}</td>
+                    <td>
+                        <form method="POST" action="/sign_in_student" class="d-flex align-items-center gap-3">
+                        <input type="hidden" name="student_id" value="{{ e.student_id }}">
+                        <input type="hidden" name="class_id" value="{{ afterschool_class.afterschool_class_id }}">
+                        <button type="submit" class="btn btn-primary">Sign-in</button>
+                        </form>
+                    </td>
                     </tr>
                 {% endfor %}
-            </tbody>
-        </table>
-        {% endif %}
+                </tbody>
+            </table>
+            {% endif %}
+            </div>
+        </div>
 
         <h4 class="mt-4">Present Students</h4>
         <table id="sign_in_table">
