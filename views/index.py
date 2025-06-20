@@ -40,7 +40,7 @@ def index():
 @login_required
 @permission_required("afterschool")
 def do_check_student():
-    query = request.args.get('q')
+    query = request.args.get('name').replace(" ", "%")
 
     today = date.today()
     subquery = (
