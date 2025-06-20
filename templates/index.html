@@ -34,11 +34,16 @@
    <div id="results"></div> 
 
    <script>
+      $(document).ready(() => {
+         $("#name").val(document.location.search.split("name=")[1].replace("+", " ") || "");
+         input_changed();
+      });
+
       function input_changed() {
          var q = $("#name").val();
          $.ajax({
             url: "/check_student",
-            data: { "q": q },
+            data: { "name": q },
             success: function(data) {
                   console.log("Searching for: ", q);
                   got_results(data);
