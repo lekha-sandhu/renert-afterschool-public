@@ -45,62 +45,36 @@
 
 <div class="container px-3">
 
-  <div class="col-6">
-    <table class="table table-bordered border-primary">
-      <thead>
-        <tr>
-          <th scope="col">Student Name</th>
-          <th scope="col">Student ID Number</th>
-          <th scope="col">Start Date</th>
-          <th scope="col">End Date</th>
-          <th scope="col">Activity Name</th>
-          <th scope="col">Activity ID</th>
-        </tr>
-      </thead>
-<tbody>
-  <tr>
-    <td>
-      {% if student and student.id %}
-        <a href="{{ url_for('report_by_student', student_id=student.id) }}">
-          {{student.name}}
-        </a>
-      {% else %}
-        {{student.name or "None"}}
-      {% endif %}
-    </td>
-    <td>
-      {% if student and student.id %}
-          {{student.id}}
-      {% else %}
-        {{student.id or "None"}}
-      {% endif %}
-    </td>
-    <td>{{startdate or "None"}}</td>
-    <td>{{enddate or "None"}}</td>
-    <td>
-      {% if activity and activity.afterschool_class_id %}
-        <a href="{{ url_for('report_by_activity', activity_id=activity.afterschool_class_id) }}">
-          {{activity.activity}}
-        </a>
-      {% else %}
-        {{activity.activity or "None"}}
-      {% endif %}
-    </td>
-    <td>
-      {% if activity and activity.afterschool_class_id %}
-        <a href="{{ url_for('report_by_activity', activity_id=activity.afterschool_class_id) }}">
-          {{activity.afterschool_class_id}}
-        </a>
-      {% else %}
-        {{activity.afterschool_class_id or "None"}}
-      {% endif %}
-    </td>
-  </tr>
-</tbody>
-    </table>
-  </div>
+<h2>
+  Report for:
+</h2>
 
-    <h1> Signins: </h1>
+<h3 style="font-weight: normal">
+    {% if student and student.name %}
+      <a href="{{ url_for('report_by_student', student_id=student.id) }}">{{ student.name }}</a>
+    {% else %}
+      All Students
+    {% endif %}
+    {% if activity and activity.activity %}
+      &nbsp;|&nbsp;<a href="{{ url_for('report_by_activity', activity_id=activity.afterschool_class_id) }}">{{ activity.activity }}</a>
+    {% else %}
+      &nbsp;|&nbsp;All Activities
+    {% endif %}
+    <br>
+    {% if not startdate and not enddate %}
+      No date range selected.
+    {% elif startdate and not enddate %}
+      Start Date: {{ startdate }} | No end date selected (showing up to present)
+    {% elif not startdate and enddate %}
+      No start date selected | End Date: {{ enddate }}
+    {% else %}
+      Start Date: {{ startdate }} | End Date: {{ enddate }}
+    {% endif %}
+
+  <br>
+  <br>
+  <br>
+    <h2> Signins: </h2>
     <table id = "sign_in_table" class="table table-bordered border-primary table-striped">
       <thead>
         <tr>
