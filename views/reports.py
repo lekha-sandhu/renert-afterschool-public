@@ -438,5 +438,6 @@ def report():
         enddate=enddate,
         activity=activity,
         signins=signins,
-        combined_data=combined_data
+        combined_data=combined_data,
+        singlemonthcheck = singlemonthcheck
     )

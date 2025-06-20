@@ -13,6 +13,13 @@
                 font-size: 16px;
             }
 
+            .form-check-input {
+            accent-color: #0d6efd;
+            width: 18px;
+            height: 25px;
+            border: 2px solid #000; /* Black outline */
+}
+
             .checkbox-wrapper {
                 background-color: #b9b9b9;
                 padding: 6px 12px;
@@ -25,6 +32,38 @@
                 accent-color: #0d6efd;
                 width: 18px;
                 height: 15px;
+            }
+            .info-tooltip {
+                display: inline-block;
+                position: relative;
+                cursor: pointer;
+                color: #0d6efd;
+                font-weight: bold;
+                margin-left: 6px;
+            }
+
+            .info-tooltip-text {
+                visibility: hidden;
+                width: 220px;
+                background-color: #222;
+                color: #fff;
+                text-align: left;
+                border-radius: 6px;
+                padding: 8px;
+                position: absolute;
+                z-index: 1;
+                bottom: 125%; /* Position above */
+                left: 50%;
+                margin-left: -110px;
+                opacity: 0;
+                transition: opacity 0.2s;
+                font-size: 13px;
+            }
+
+            .info-tooltip:hover .info-tooltip-text,
+            .info-tooltip:focus .info-tooltip-text {
+                visibility: visible;
+                opacity: 1;
             }
         </style>
         
@@ -46,7 +85,7 @@
         <select class="form-control js-example-basic-single" name = "student">
             <option value="">None</option>
             {% for s in student %}
-                <option value="{{s.id}}">{{s.name}}</option>
+                <option value="{{s.id}}">{{s.name}} ({{s.grade}})</option>
             {% endfor %}
         </select>
 
@@ -57,23 +96,39 @@
         <select class="form-control js-example-basic-single" name = "activity">
             <option value="">None</option>
             {% for a in activity %}
-                <option value="{{a.afterschool_class_id}}">{{a.activity}} - {{a.instructor}} - {{a.weekdays}}</option>
+                <option value="{{a.afterschool_class_id}}">{{a.activity}} - {{a.instructor.name}} - {{a.weekdays}} - {{a.grades}}</option>
             {% endfor %}
         </select>
 
         <br><br>
 
-        <h4>Select a Start Month (Input does not properly work on Firefox browser) </h4>
+        <h4>
+        Select a Start Month
+        <span class="info-tooltip" tabindex="0">ℹ
+            <span class="info-tooltip-text">
+            Input does not properly work on Firefox browser
+            </span>
+        </span>
+        </h4>
 
-        <input type="month", name = "startdate"> </input>
-        <label class="checkbox-wrapper">
-            <input class="form-check-input" type="checkbox" name = "singledatecheck">
-            Single Month
-        </label>
+<input type="month" name="startdate" class="form-control" style="width:auto; display:inline-block; margin-right:12px;">
+
+<div class="form-check d-inline-block align-middle" style="vertical-align: middle; margin-left: 10px;">
+  <input class="form-check-input" type="checkbox" id="singleMonthCheck" name="singledatecheck">
+  <label class="form-check-label" for="singleMonthCheck" style="font-weight:normal;">
+    Single Month
+  </label>
+</div>
         
         <br><br>
 
-        <h4>Select a End Month</h4>
+        <h4>Select a End Month
+        <span class="info-tooltip" tabindex="0">ℹ
+            <span class="info-tooltip-text">
+            If no end date is selected, the current month will be used as the end date.
+            </span>
+        </span>
+        </h4>
 
         <input type="month", name = "enddate"> </input>
         
