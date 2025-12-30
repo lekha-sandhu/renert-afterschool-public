@@ -147,3 +147,43 @@ class HTML5DateTimeLocalTimezonedField(DateTimeField):
             local_dt = self.data.astimezone(self.client_timezone)
             return local_dt.strftime('%Y-%m-%dT%H:%M:%S')
         return ''
+
+
+
+
+
+##
+## TODO: use this in the future...
+##
+def created_timestamptz_formatter_func(requested_timezone='America/Edmonton', format_string="%Y-%m-%d  %I:%M:%S%P"):
+
+    # Accept either string or ZoneInfo object
+    if isinstance(requested_timezone, str):
+        target_timezone = ZoneInfo(requested_timezone)
+    elif isinstance(requested_timezone, ZoneInfo):
+        target_timezone = requested_timezone
+    else:
+        raise ValueError(f"requested_timezone must be a string or ZoneInfo object, got {client_timezone}/{type(client_timezone)}")
+
+    # To prevent later woes,
+    # Check that the format string is valid now during construction.
+    now = datetime.now(timezone.utc)
+    tmp = now.strftime(format_string) #If this fails, check your "format_string"
+
+    # Create a function using the requested parameters
+
+    def localized_timezone_formatter(dt):
+        if not dt:
+            return None
+        if not isinstance(dt, datetime):
+            raise ValueError(f"'dt' parameter must be a datetime object with timezone")
+        if not dt.tzinfo:
+            raise ValueError(f"'dt' parameter must be a timezone-aware datetime")
+
+        # Convert the timestamp to a timezone that is suitable for the USER display.
+        # FIXME: currently lazy solution is always Mountain-Time...
+        localized_dt = dt.astimezone(target_timezone)
+        return localized_dt.strftime(format_string)
+
+    # return the customized function
+    return localized_timezone_formatter
