@@ -1,12 +1,6 @@
 {% extends "layout.html" %}
 
 {% block head %}
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-        <link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css" />
-        <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
-
         <style>
             table {
                 width: 100%;
@@ -148,16 +142,22 @@
 
 {% block javascript %}
     <script>
-        $(function() {
+        function init_select2() {
             $("#student_list").select2();
-        });
+        }
 
-        $(document).ready( function () {
+        function init_datatables() {
             $('#sign_in_table').DataTable({ "paging": false});
-        } );
-
-        $(document).ready( function () {
             $('#sign_out_table').DataTable({ "paging": false});
-        } );
+        }
+
+        function setup() {
+            init_select2();
+            init_datatables();
+        }
+
+        $(document).ready(function() {
+            setup();
+        });
     </script>
 {% endblock %}

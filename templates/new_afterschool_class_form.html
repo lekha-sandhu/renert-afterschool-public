@@ -1,6 +1,9 @@
-<html>
-  <body>
-    <H1>Enter New Afterschool Activity</h1>
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col">
+    <h1>Enter New Afterschool Activity</h1>
 
     <form action="/process-new-afterschool-class" method="POST">
 
@@ -39,9 +42,9 @@
       End Time: <input type=time>
       <br/>
 
-      <input type=submit value="Add Activity">
+      <input type="submit" value="Add Activity" class="btn btn-primary">
 
     </form>
-    
-  </body>
-</html>
+  </div>
+</div>
+{% endblock %}

@@ -1,9 +1,6 @@
 {% extends "layout.html" %}
 
 {% block head %}
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css" />
-
     <style>
      table {
          border: 1px solid green;
@@ -109,15 +106,22 @@
 {% endblock %}
 
 {% block javascript %}
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
     <script>
-     $(function() {
-         $("#student_list").select2();
-     });
+        function init_select2() {
+            $("#student_list").select2();
+        }
 
-     $(document).ready( function () {
-         $('#my_table').DataTable({ "paging": false});
-     } );
+        function init_datatables() {
+            $('#my_table').DataTable({ "paging": false});
+        }
+
+        function setup() {
+            init_select2();
+            init_datatables();
+        }
+
+        $(document).ready(function() {
+            setup();
+        });
     </script>
 {% endblock %}

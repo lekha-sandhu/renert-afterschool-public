@@ -1,14 +1,5 @@
 {% extends "layout.html" %}
 
-{% block head %}
-<head>
-   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-</head>
-
-{% endblock %}
-
 {% block content %}
 <div class="row">
    <div class="col">
@@ -31,19 +22,26 @@
       <form>
          <label for="name"><b>Search Student:</b></label>
          <input name="name" id="name" oninput="input_changed()"> </input>
-      </form> 
+      </form>
 
-      <div id="results"></div> 
-
+      <div id="results"></div>
    </div>
 </div>
 {% endblock %}
 
 {% block javascript %}
     <script>
-        $(document).ready(() => {
+        function init_search_form() {
             $("#name").val(document.location.search.split("name=")[1].replace("+", " ") || "");
             input_changed();
+        }
+
+        function setup() {
+            init_search_form();
+        }
+
+        $(document).ready(function() {
+            setup();
         });
 
         function input_changed() {
@@ -58,14 +56,15 @@
             });
         }
 
-        function got_results(data) {
+     function got_results(data)
+     {
             var results = $("#results");
-            results.empty();  
+            results.empty();
 
-            data = JSON.parse(data); 
+            data = JSON.parse(data);
 
             data.forEach(student => {
-                if (student.grade !== null) {  
+                if (student.grade !== null) {
                    let classInfo
                    if (student.signin && student.signin.sign_out_time) {
                       classInfo = `Signed out of ${student.signin.class_name} at ${student.signin.sign_out_time}`;
@@ -76,7 +75,7 @@
                    }
 
                    let button = $(`<button class="student-button">${student.name} (Grade ${student.grade}) - ${classInfo}</button>`);
-                
+
                    button.click(() => {
                       alert(`Student: ${student.name}\nGrade: ${student.grade}\n${classInfo}`);
                    });

@@ -1,8 +1,6 @@
 {% extends "layout.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css" />
-
 <style>
  table {
      border: 1px solid green;
@@ -101,12 +99,17 @@
 {% endblock %}
 
 {% block javascript %}
-    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
-
-
     <script>
-     $(document).ready( function () {
-         $('#my_table').DataTable({ "paging": false});
-     } );
+        function init_datatables() {
+            $('#my_table').DataTable({ "paging": false});
+        }
+
+        function setup() {
+            init_datatables();
+        }
+
+        $(document).ready(function() {
+            setup();
+        });
     </script>
 {% endblock %}
