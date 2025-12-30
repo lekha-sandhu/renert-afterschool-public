@@ -1,0 +1,26 @@
+
+<h1>Managing Class {{ afterschool_class.activity }}</h1>
+
+<h3>Instructor: {{ afterschool_class.instructor.name }}</h3>
+
+
+All Students:
+
+<table>
+{% for s in students %}
+
+{% if s.sign_out_time %}
+<tr>
+  <td>
+    {{ s.student.name }}
+  </td>
+  <td>
+    {{ s.sign_in_time.strftime("%H") }}
+  </td>
+  <td>
+  </td>
+</tr>
+{% endif %}
+
+{% endfor %}
+</table>

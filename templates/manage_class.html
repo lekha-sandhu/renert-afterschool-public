@@ -31,8 +31,8 @@
 {% endblock %}
 
 {% block content %}
-
-    <body class="container mt-4">
+<div class="row">
+    <div class="col">
         <h1>Managing Class: {{ afterschool_class.activity }}</h1>
         <h2>Instructor: {{ afterschool_class.instructor.name }}</h2>
         <h2>Room: {{ afterschool_class.room }} | Grades: {{ afterschool_class.grades }}</h2>
@@ -142,18 +142,22 @@
             </tbody>
         </table>
 
-        <script>
-            $(function() {
-                $("#student_list").select2();
-            });
+    </div>
+</div>
+{% endblock %}
 
-            $(document).ready( function () {
-                $('#sign_in_table').DataTable({ "paging": false});
-            } );
+{% block javascript %}
+    <script>
+        $(function() {
+            $("#student_list").select2();
+        });
 
-            $(document).ready( function () {
-                $('#sign_out_table').DataTable({ "paging": false});
-            } );
-        </script>
-    </body>
+        $(document).ready( function () {
+            $('#sign_in_table').DataTable({ "paging": false});
+        } );
+
+        $(document).ready( function () {
+            $('#sign_out_table').DataTable({ "paging": false});
+        } );
+    </script>
 {% endblock %}

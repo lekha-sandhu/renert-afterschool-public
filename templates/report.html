@@ -42,12 +42,9 @@
 {% endblock %}
 
 {% block content %}
-
-<div class="container px-3">
-
-<h2>
-  Report for:
-</h2>
+<div class="row">
+    <div class="col">
+        <h2>Report for:</h2>
 
 <h3 style="font-weight: normal">
     {% if student and student.name %}
@@ -150,30 +147,30 @@
     </tbody>
   </table>
 
+    </div>
 </div>
-  
-<script>
-  $(document).ready( function () {
-    
-      new DataTable('#sign_in_table', {
-        layout: {
-            topStart: {
-              buttons: ['print', 'copy', 'pdf', 'excel', 'csv']
-            }
-        },
-        ordering: false // Disable sorting
-      });
+{% endblock %}
 
-      new DataTable('#totals_table', {
-        layout: {
-            topStart: {
-                buttons: ['print', 'copy', 'pdf', 'excel', 'csv']
-            }
-        }
-      });
+{% block javascript %}
+    <script>
+        $(document).ready( function () {
+            
+            new DataTable('#sign_in_table', {
+                layout: {
+                    topStart: {
+                      buttons: ['print', 'copy', 'pdf', 'excel', 'csv']
+                    }
+                },
+                ordering: false // Disable sorting
+            });
 
-      
-  } );
-
-</script>
+            new DataTable('#totals_table', {
+                layout: {
+                    topStart: {
+                        buttons: ['print', 'copy', 'pdf', 'excel', 'csv']
+                    }
+                }
+            });
+        } );
+    </script>
 {% endblock %}

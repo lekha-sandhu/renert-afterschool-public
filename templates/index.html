@@ -10,79 +10,80 @@
 {% endblock %}
 
 {% block content %}
-   <style>
-      .student-button {
-         display: block;
-         width: 100%;
-         padding: 10px;
-         margin: 5px 0;
-         border: none;
-         border-radius: 5px;
-         cursor: pointer;
-      }
-      .student-button:hover {
-         background-color: #0056b3;
-      }
-   </style>
-   <h1>Welcome to Renert School's Afterschool Website!</h1>
+<div class="row">
+   <div class="col">
+      <style>
+         .student-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+         }
+         .student-button:hover {
+            background-color: #0056b3;
+         }
+      </style>
+      <h1>Welcome to Renert School's Afterschool Website!</h1>
 
-   <form>
-      <label for="name"><b>Search Student:</b></label>
-      <input name="name" id="name" oninput="input_changed()"> </input>
-   </form> 
+      <form>
+         <label for="name"><b>Search Student:</b></label>
+         <input name="name" id="name" oninput="input_changed()"> </input>
+      </form> 
 
-   <div id="results"></div> 
+      <div id="results"></div> 
 
-   <script>
-      $(document).ready(() => {
-         $("#name").val(document.location.search.split("name=")[1].replace("+", " ") || "");
-         input_changed();
-      });
+   </div>
+</div>
+{% endblock %}
 
-      function input_changed() {
-         var q = $("#name").val();
-         $.ajax({
-            url: "/check_student",
-            data: { "name": q },
-            success: function(data) {
-                  console.log("Searching for: ", q);
-                  got_results(data);
-            }
+{% block javascript %}
+    <script>
+        $(document).ready(() => {
+            $("#name").val(document.location.search.split("name=")[1].replace("+", " ") || "");
+            input_changed();
+        });
 
-         });
-      }
+        function input_changed() {
+            var q = $("#name").val();
+            $.ajax({
+                url: "/check_student",
+                data: { "name": q },
+                success: function(data) {
+                      console.log("Searching for: ", q);
+                      got_results(data);
+                }
+            });
+        }
 
-      function got_results(data) {
-         var results = $("#results");
-         results.empty();  
+        function got_results(data) {
+            var results = $("#results");
+            results.empty();  
 
-         data = JSON.parse(data); 
+            data = JSON.parse(data); 
 
-         data.forEach(student => {
-            if (student.grade !== null) {  
-               let classInfo
-               if (student.signin && student.signin.sign_out_time) {
-                  classInfo = `Signed out of ${student.signin.class_name} at ${student.signin.sign_out_time}`;
-               } else if (student.signin && student.signin.sign_in_time) {
-                  classInfo = `In ${student.signin.class_name} since ${student.signin.sign_in_time}`;
-               } else {
-                  classInfo = "No activity today";
-               }
+            data.forEach(student => {
+                if (student.grade !== null) {  
+                   let classInfo
+                   if (student.signin && student.signin.sign_out_time) {
+                      classInfo = `Signed out of ${student.signin.class_name} at ${student.signin.sign_out_time}`;
+                   } else if (student.signin && student.signin.sign_in_time) {
+                      classInfo = `In ${student.signin.class_name} since ${student.signin.sign_in_time}`;
+                   } else {
+                      classInfo = "No activity today";
+                   }
 
-               let button = $(`<button class="student-button">${student.name} (Grade ${student.grade}) - ${classInfo}</button>`);
-            
-               button.click(() => {
-                  alert(`Student: ${student.name}\nGrade: ${student.grade}\n${classInfo}`);
-               });
+                   let button = $(`<button class="student-button">${student.name} (Grade ${student.grade}) - ${classInfo}</button>`);
+                
+                   button.click(() => {
+                      alert(`Student: ${student.name}\nGrade: ${student.grade}\n${classInfo}`);
+                   });
 
-               results.append(button);
-            }
-         });
-      }
-   </script>
-     
-   <script>
-       $(document).ready(function() {
-      });
-   </script>
-{% endblock %}  
+                   results.append(button);
+                }
+            });
+        }
+    </script>
+{% endblock %}

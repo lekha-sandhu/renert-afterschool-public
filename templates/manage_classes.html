@@ -28,9 +28,8 @@
 {% endblock %}
 
 {% block content %}
-
-    <body class="container mt-4">
-
+<div class="row">
+    <div class="col">
         <h1 class="text-center">Manage Afterschool Classes</h1>
         {% set today = ["Mon", "Tue", "Wed", "Thu", "Friday", "Sat", "Sun"][now().weekday()] %}
         <table id="my_table" class="table table-bordered">
@@ -69,12 +68,15 @@
 
 
             </tbody>
-            <script>
-                $(document).ready( function () {
-                $('#my_table').DataTable({ "paging": false});
-                } );
-            </script>
         </table>
-    </body>
+    </div>
+</div>
+{% endblock %}
 
+{% block javascript %}
+    <script>
+        $(document).ready( function () {
+            $('#my_table').DataTable({ "paging": false});
+        } );
+    </script>
 {% endblock %}

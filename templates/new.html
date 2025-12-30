@@ -1,6 +1,11 @@
-<h1>Add Class!</h1>
+{% extends "layout.html" %}
 
-<form action="/process_new_afterschool_class" method="POST">
+{% block content %}
+<div class="row">
+  <div class="col">
+    <h1>Add Class!</h1>
+
+    <form action="/process_new_afterschool_class" method="POST">
 
   <!-- <div class="mb-3">
     <label for="exampleFormControlInput1" class="form-label">Name:</label>
@@ -94,6 +99,9 @@
     <input type="time" id="end_time" name="end_time">
   </br>
 
-  <input type="submit" value="Add Class">
+      <input type="submit" value="Add Class" class="btn btn-primary">
 
-</form>
+    </form>
+  </div>
+</div>
+{% endblock %}
