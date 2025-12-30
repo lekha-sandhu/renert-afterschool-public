@@ -2,103 +2,111 @@
 
 {% block head %}
 <link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css" />
-<script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
-        <style>
-            table {
-                border: 1px solid green;
-                border-collapse: collapse;
-                margin-top: 20px;
-            }
-            th, td {
-                border: 1px solid white;
-                padding: 10px;
-                text-align: center;
-            }
-            th {
-                background-color: white;
-            }
-            h1 {
-                margin-bottom: 20px;
-            }
-            a {
-                text-decoration: none;
-                color: white;
-            }
-        </style>
+
+<style>
+ table {
+     border: 1px solid green;
+     border-collapse: collapse;
+     margin-top: 20px;
+ }
+ th, td {
+     border: 1px solid white;
+     padding: 10px;
+     text-align: center;
+ }
+ th {
+     background-color: white;
+ }
+ h1 {
+     margin-bottom: 20px;
+ }
+ a {
+     text-decoration: none;
+     color: white;
+ }
+</style>
 {% endblock %}
 
 {% block content %}
+    <div class="row">
+        <div class="col">
 
-    <body class="container mt-4">
+            <h1 class="text-center">Available Afterschool Classes</h1>
+            {% set today = ["Mon", "Tue", "Wed", "Thu", "Friday", "Sat", "Sun"][now().weekday()] %}
 
-        <h1 class="text-center">Available Afterschool Classes</h1>
-        {% set today = ["Mon", "Tue", "Wed", "Thu", "Friday", "Sat", "Sun"][now().weekday()] %}
-        <table id="my_table" class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Activity</th>
-                    <th>Weekdays</th>
-                    <th>Instructor</th>
-                    <th>Room</th>
-                    <th>Grades</th>
-                    <th>Sign-in/Sign-Out</th>
-                    <th>Enrollment</th>
-                </tr>
-            </thead
-            <tbody>
-            
-            {% for c in active_classes|sort(attribute='weekdays', reverse=false) %}
-                {% if today in c.weekdays %}
-                <tr>
-                    <td>{{ c.activity }}</td>
-                    <td>{{ c.weekdays }}</td>
-                    <td>{{ c.instructor }}</td>
-                    <td>{{ c.room }}</td>
-                    <td>{{ c.grades }}</td>
-                    <td>
-                        <a href="/manage_class/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
-                            Manage Class
-                        </a>
-                    </td>
-                    <td>
-                        <a href="/manage_enrollments/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
-                            Manage Enrollments
-                        </a>
-                    </td>
-                </tr>
-                {% endif %}
-            {% endfor %}
+            <table id="my_table" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Activity</th>
+                        <th>Weekdays</th>
+                        <th>Instructor</th>
+                        <th>Room</th>
+                        <th>Grades</th>
+                        <th>Sign-in/Sign-Out</th>
+                        <th>Enrollment</th>
+                    </tr>
+                </thead
+                <tbody>
 
-            {% for c in active_classes|sort(attribute='weekdays', reverse=false) %}
-                {% if today not in c.weekdays %}
-                <tr>
-                    <td>{{ c.activity }}</td>
-                    <td>{{ c.weekdays }}</td>
-                    <td>{{ c.instructor }}</td>
-                    <td>{{ c.room }}</td>
-                    <td>{{ c.grades }}</td>
-                    <td>
-                        <a href="/manage_class/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
-                            Manage Class
-                        </a>
-                    </td>
-                    <td>
-                        <a href="/manage_enrollments/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
-                            Manage Enrollments
-                        </a>
-                    </td>
-                </tr>
-                {% endif %}
-            {% endfor %}
+                    {% for c in active_classes|sort(attribute='weekdays', reverse=false) %}
+                        {% if today in c.weekdays %}
+                            <tr>
+                                <td>{{ c.activity }}</td>
+                                <td>{{ c.weekdays }}</td>
+                                <td>{{ c.instructor }}</td>
+                                <td>{{ c.room }}</td>
+                                <td>{{ c.grades }}</td>
+                                <td>
+                                    <a href="/manage_class/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
+                                        Manage Class
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="/manage_enrollments/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
+                                        Manage Enrollments
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% for c in active_classes|sort(attribute='weekdays', reverse=false) %}
+                        {% if today not in c.weekdays %}
+                            <tr>
+                                <td>{{ c.activity }}</td>
+                                <td>{{ c.weekdays }}</td>
+                                <td>{{ c.instructor }}</td>
+                                <td>{{ c.room }}</td>
+                                <td>{{ c.grades }}</td>
+                                <td>
+                                    <a href="/manage_class/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
+                                        Manage Class
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="/manage_enrollments/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
+                                        Manage Enrollments
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
 
 
-            </tbody>
-            <script>
-                $(document).ready( function () {
-                $('#my_table').DataTable({ "paging": false});
-                } );
-            </script>
-        </table>
-    </body>
+                </tbody>
+            </table>
 
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
+
+
+    <script>
+     $(document).ready( function () {
+         $('#my_table').DataTable({ "paging": false});
+     } );
+    </script>
 {% endblock %}
