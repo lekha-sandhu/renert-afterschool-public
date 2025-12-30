@@ -22,6 +22,7 @@ from flask_admin.model.template import EndpointLinkRowAction, LinkRowAction
 from root import app,db,csrf,admin
 from hgsc_utils.flask_admin.flask_admin_menu_separator import DividerMenu
 from hgsc_utils.flask_admin.flask_admin_permission_mixin import RenertAdminPermissionMixin
+from hgsc_utils.flask_admin.form_date_fields import HTML5DateField , HTML5DateTimeLocalTimezonedField
 
 from models.afterschool_classes import AfterschoolClass
 from models.afterschool_signins import AfterschoolSignin
@@ -162,6 +163,13 @@ class AfterschoolSigninsView(AfterschoolAdminPermissionMixin,ModelView):
         ("updated_at",True),
         ("created_at",True),
     ]
+
+    form_overrides = {
+        'sign_in_time': HTML5DateTimeLocalTimezonedField,
+        'sign_out_time': HTML5DateTimeLocalTimezonedField,
+    }
+
+
 
 class AfterschoolEnrollmentView(AfterschoolAdminPermissionMixin,ModelView):
     can_create = True
