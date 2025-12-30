@@ -39,6 +39,10 @@
                 <div class="navbar-nav">
                     <a class="nav-link" href="/list-classes" href="/">List of Classes</a>
                     <a class="nav-link" href="/pick_report">Reports</a>
+
+                    {% if current_user.has_permission_name("afterschool_admin") %}
+                    <a class="nav-link" href="/admin">Organizer</a>
+                    {% endif %}
                     <a class="nav-link" href="/about">About</a>
                 </div>
             </div>
