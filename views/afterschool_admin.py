@@ -134,7 +134,7 @@ class AfterschoolClassesView(AfterschoolAdminPermissionMixin,ModelView):
 
 class AfterschoolSigninsView(AfterschoolAdminPermissionMixin,ModelView):
     can_create = False
-    can_delete = False
+    can_delete = True
     can_edit = True
     can_export = True
 
@@ -183,7 +183,7 @@ class AfterschoolSigninsView(AfterschoolAdminPermissionMixin,ModelView):
 
 class AfterschoolEnrollmentView(AfterschoolAdminPermissionMixin,ModelView):
     can_create = True
-    can_delete = False
+    can_delete = True
     can_edit = True
     can_export = True
 
