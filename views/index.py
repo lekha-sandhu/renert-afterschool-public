@@ -26,10 +26,6 @@ app.jinja_env.globals['now'] = datetime.now
 
 import pytz
 
-#apparently needed to use flask flash()
-app.secret_key = "some_secret_key"
-
-
 @app.route('/')
 @login_required
 @permission_required("afterschool")
@@ -88,9 +84,9 @@ def do_check_student():
             "class_name": afterschool_class.activity if afterschool_class else None
         } if signin else None
         display_data.append(record_info)
-    
+
     #pprint(display_data)
-    
+
     return json.dumps(display_data)
 
 @app.route('/about')
@@ -128,7 +124,7 @@ def process_new_afterschool_class():
     pprint(request.form)
 
     # name = request.form.get("name")
-    days = request.form.getlist("day")  
+    days = request.form.getlist("day")
     print (days)
     days=",".join(days)
     print (days)
@@ -142,7 +138,7 @@ def process_new_afterschool_class():
 
     if not all([days, activity, grade, room, instructor, start_time, end_time]):
         return "error: cannot leave blank"
-    
+
     valid_grades = set(str(i) for i in range(1, 13)) | {'K'}
     grades = grade.split(',')
     if not all(g.strip() in valid_grades for g in grades):
@@ -184,7 +180,7 @@ def manage_class(afterschool_class_id):
     today = date.today()
     students_signed_in = AfterschoolSignin.query.filter_by(afterschool_class_id=afterschool_class_id).filter_by(sign_in_date_cache=today).all()
     grades = c.grades.split(',')
-    
+
     signed_in_ids = {s.student_id for s in students_signed_in if not s.sign_out_time}
 
     filters_for_enrollment = []
@@ -248,10 +244,10 @@ def process_student_sign_in():
         enrolled = True
 
     print(f"enrollment = {enrollment}")
-    
+
     print(f"child is enrolled T/F: {enrolled}")
 
-    
+
     print(f"Signing in student {student_id} to class_id {class_id} at {sign_in_time}")
 
     x =  AfterschoolSignin(
@@ -275,13 +271,13 @@ def process_student_sign_out():
     afterschool_signin_id = request.form.get("afterschool_signin_id")
     tz = pytz.timezone('America/Edmonton')
     sign_out_time = datetime.now(tz)
-    
+
     record = db.session.query(AfterschoolSignin).get(afterschool_signin_id)
-        
+
     if record:
         record.sign_out_time = sign_out_time
         db.session.commit()
-    
+
     return redirect("/manage_class/"+str(class_id))
 
 @app.route("/sign_out_all_students", methods=["POST"])
@@ -312,7 +308,7 @@ def manage_enrollments(afterschool_class_id):
     valid_students_for_enrollment = []
     for grade in valid_grades:
         valid_students_for_enrollment += Student.query.filter_by(grade=grade).order_by(Student.name).all()
-    
+
     enrollments = AfterschoolEnrollment.query.filter_by(afterschool_class_id = afterschool_class_id).all()
 
     return render_template("enrollments.html", afterschool_class=afterschool_activity, valid_students_for_enrollment = valid_students_for_enrollment, enrollments = enrollments)
@@ -342,15 +338,19 @@ def process_student_enrollment():
         flash("ERROR: Enrollment not added - End Date is before Start Date." , "danger")
         return redirect("/manage_enrollments/" + str(class_id))
 
-    #queries all the existing student's enrollments
-    all_student_enrollments =  AfterschoolEnrollment.query.filter_by(student_id = student_id).all()
+    #queries all the existing student's enrollments for this class (if any)
+    all_student_enrollments =  AfterschoolEnrollment.query.filter_by(student_id=student_id,
+                                                                     afterschool_class_id=class_id).all()
 
     #checks if there's an overlap and returns flash() message and redirects to main enrollment page
+
+    ## NOTE: On top of this (application-level logic) check, there's also a PostgreSQL database
+    ## constraint to prevent overlaps (see GiST ExcludeConstraint in AfterschoolEnrollments.py)
     for enrollment in all_student_enrollments:
         if check_for_overlap_with_existing_enrollment(enrollment.start_date, enrollment.end_date):
             flash("ERROR: Enrollment not added - New Enrollment Dates overlap with an existing Enrollment.", "danger")
             return redirect("/manage_enrollments/" + str(class_id))
-    
+
     #if we got to this point, the enrollment should be valid and it adds to database and redirects with no flash()
     new_afterschool_enrollment =  AfterschoolEnrollment(
         student_id=student_id,
@@ -374,7 +374,7 @@ def process_remove_student_enrollment():
     record = db.session.query(AfterschoolEnrollment).get(afterschool_enrollment_id)
 
     if record:
-        db.session.delete(record)  
-        db.session.commit()    
+        db.session.delete(record)
+        db.session.commit()
 
     return redirect("/manage_enrollments/"+str(class_id))
