@@ -11,7 +11,7 @@ class AfterschoolSignin(db.Model, TimestampMixin):
 
     afterschool_signin_id = db.Column(db.Integer, primary_key=True)
 
-    afterschool_class_id = db.Column(db.Integer,db.ForeignKey('afterschool_classes'),nullable=False)
+    afterschool_class_id = db.Column(db.Integer,db.ForeignKey('afterschool_classes.afterschool_class_id'),nullable=False)
     afterschool_class = db.Relationship('AfterschoolClass')
 
     student_id = db.Column(db.Integer, db.ForeignKey('library_students.id'), nullable=False)

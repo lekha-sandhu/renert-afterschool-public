@@ -13,9 +13,10 @@ class AfterschoolClass(db.Model, TimestampMixin):
 
     active = db.Column(db.Boolean, nullable=False, default=True, server_default=text('true'))
 
-    # HACK ALERT: fix this ugliness, 2024-25 is ID 12 in the other database.
-    school_year_id = db.Column(db.Integer, nullable=False, default=12, server_default=text('12'))
-    
+    # HACK ALERT: fix this ugliness. Since it is currently unused, set it to 99 so it won't
+    # match any valid years in other database (don't you just love Y2K-style magic numbers?)
+    school_year_id = db.Column(db.Integer, nullable=False, default=99, server_default=text('99'))
+
     activity = db.Column(db.String, nullable=False)
 
     room = db.Column(db.String,nullable=False)
@@ -53,5 +54,3 @@ class AfterschoolClass(db.Model, TimestampMixin):
 
     def __repr__(self):
         return f"Afterschool-Class<id: {self.afterschool_class_id}, activity: {self.activity}>"
-
-    
