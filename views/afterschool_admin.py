@@ -99,6 +99,21 @@ class AfterschoolClassesView(AfterschoolAdminPermissionMixin,ModelView):
         'active'
     ]
 
+    column_exclude_list = [
+        "created_at",
+        "updated_at",
+    ]
+
+    form_excluded_columns = [
+        "created_at",
+        "updated_at",
+    ]
+
+    form_excluded_columns = [
+        "created_at",
+        "updated_at",
+    ]
+
     column_default_sort = [
         ("updated_at",True),
         ("created_at",True),
@@ -137,6 +152,12 @@ class AfterschoolSigninsView(AfterschoolAdminPermissionMixin,ModelView):
         "sign_in_date_cache",
     ]
 
+    form_excluded_columns = [
+        "created_at",
+        "updated_at",
+        "sign_in_date_cache",
+    ]
+
     column_default_sort = [
         ("updated_at",True),
         ("created_at",True),
@@ -167,6 +188,11 @@ class AfterschoolEnrollmentView(AfterschoolAdminPermissionMixin,ModelView):
     }
 
     column_exclude_list = [
+        "created_at",
+        "updated_at",
+    ]
+
+    form_excluded_columns = [
         "created_at",
         "updated_at",
     ]
