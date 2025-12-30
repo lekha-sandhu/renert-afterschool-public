@@ -5,6 +5,7 @@
 from flask import request,redirect,url_for,abort,flash
 from flask_login import current_user, login_user
 from pprint import pprint,pformat
+from datetime import datetime
 from flask_admin import form as flask_admin_form
 from flask_admin.base import MenuLink
 from flask_admin.contrib.sqla import ModelView
@@ -28,8 +29,17 @@ from models.afterschool_classes import AfterschoolClass
 from models.afterschool_signins import AfterschoolSignin
 from models.afterschool_enrollment import AfterschoolEnrollment
 
+import global_settings
+
 def _format_datetime(dt):
     return dt.strftime("%Y-%m-%d if  %I:%M:%S %p").replace(" 0", " ") if dt else None
+
+
+def localized_time_formatter(dt):
+    if not dt:
+        return None
+    return dt.astimezone(global_settings.tz).strftime("%Y-%m-%d %I:%M%P")
+
 
 def _format_date(dt):
     return dt.strftime("%Y-%m-%d") if dt else None
@@ -143,8 +153,8 @@ class AfterschoolSigninsView(AfterschoolAdminPermissionMixin,ModelView):
 
     column_formatters = {
         'afterschool_class': lambda v,c,m,n: _format_afterschool_class(m.afterschool_class),
-        'sign_in_time': lambda v,c,m,n: _format_datetime(m.sign_in_time),
-        'sign_out_time': lambda v,c,m,n: _format_datetime(m.sign_out_time)
+        'sign_in_time': lambda v,c,m,n: localized_time_formatter(m.sign_in_time),
+        'sign_out_time': lambda v,c,m,n: localized_time_formatter(m.sign_out_time)
     }
 
     column_exclude_list = [
