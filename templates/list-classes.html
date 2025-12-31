@@ -30,6 +30,11 @@
         <div class="col">
 
             <h1 class="text-center">Available Afterschool Classes</h1>
+
+            <div class="mb-3">
+                <a href="{{ url_for('new_afterschool_class') }}" class="btn btn-primary">Add New Class</a>
+            </div>
+
             {% set today = ["Mon", "Tue", "Wed", "Thu", "Friday", "Sat", "Sun"][now().weekday()] %}
 
             <table id="my_table" class="table table-bordered">
