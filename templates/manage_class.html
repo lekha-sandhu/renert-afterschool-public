@@ -2,6 +2,11 @@
 
 {% block head %}
     <style>
+     /* Ensure the Select2 is full width ( https://stackoverflow.com/a/38717295) */
+     .select2-container {
+         width: 100% !important;
+     }
+
      .card {
          box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
          border: 1px solid rgba(0, 0, 0, 0.125);
@@ -72,12 +77,7 @@
                     <form method="POST" action="{{ url_for('process_student_sign_in') }}">
                         <div class="row align-items-center">
                             <div class="col-md-8">
-                                <select id="student_list" class="form-select" name="student_id" required>
-                                    <option selected disabled>Select Student to sign-in</option>
-                                    {% for s in students_grade %}
-                                        <option value="{{ s.id }}">{{ s.name }} (Gr. {{ s.grade }})</option>
-                                    {% endfor %}
-                                </select>
+                                <input type=hidden name="student_id" id="student_list">
                             </div>
                             <div class="col-md-4">
                                 <input type="hidden" name="class_id" value="{{ afterschool_class.afterschool_class_id }}">
@@ -93,7 +93,7 @@
     <!-- Pre-enrolled Students and Present Students Section -->
     <div class="row mb-4">
         <!-- Pre-enrolled Students -->
-        <div class="col-lg-6 mb-3">
+        <div class="col-lg-5 mb-3">
             <div class="card h-100">
                 <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Pre-enrolled Students</h5>
@@ -134,7 +134,7 @@
         </div>
 
         <!-- Present Students -->
-        <div class="col-lg-6 mb-3">
+        <div class="col-lg-7 mb-3">
             <div class="card h-100">
                 <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Present Students</h5>
@@ -225,22 +225,35 @@
 
 {% block javascript %}
     <script>
-        function init_select2() {
-            $("#student_list").select2();
-        }
+     const students = [
+         {% for s in students_grade %}
+         { "id":"{{ s.id }}", "text": "{{ s.name }} (Gr. {{ s.grade }})" },
+         {% endfor %}
+     ];
 
-        function init_datatables() {
-            $('#sign_in_table').DataTable({ "paging": false});
-            $('#sign_out_table').DataTable({ "paging": false});
-        }
+     function init_select2()
+     {
+         $("#student_list").select2({
+             placeholder: "Select Student to sign-in",
+             data: students,
+         });
+         $("#student_list").select2('focus');
+     }
 
-        function setup() {
-            init_select2();
-            init_datatables();
-        }
+     function init_datatables()
+     {
+         $('#sign_in_table').DataTable({ "paging": false});
+         $('#sign_out_table').DataTable({ "paging": false});
+     }
 
-        $(document).ready(function() {
-            setup();
-        });
+     function setup()
+     {
+         init_select2();
+         init_datatables();
+     }
+
+     $(document).ready(function() {
+         setup();
+     });
     </script>
 {% endblock %}

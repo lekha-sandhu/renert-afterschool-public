@@ -141,7 +141,9 @@
 {% block javascript %}
     <script>
         function init_select2() {
-            $('.js-example-basic-single').select2();
+            $('.js-example-basic-single').select2({
+                placeholder: "Select an option"
+            });
         }
 
         function setup() {
