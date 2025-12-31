@@ -74,16 +74,9 @@
                     <h5 class="card-title mb-0">Sign-in New Student</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('process_student_sign_in') }}">
-                        <div class="row align-items-center">
-                            <div class="col-md-8">
-                                <input type=hidden name="student_id" id="student_list">
-                            </div>
-                            <div class="col-md-4">
-                                <input type="hidden" name="class_id" value="{{ afterschool_class.afterschool_class_id }}">
-                                <button type="submit" class="btn btn-success">Sign-in Student</button>
-                            </div>
-                        </div>
+                    <form id="signin-form" method="POST" action="{{ url_for('process_student_sign_in') }}">
+                        <input type="hidden" name="student_id" id="student_list">
+                        <input type="hidden" name="class_id" value="{{ afterschool_class.afterschool_class_id }}">
                     </form>
                 </div>
             </div>
@@ -231,12 +224,24 @@
          {% endfor %}
      ];
 
+     function submit_form() {
+         $("#signin-form").submit();
+     }
+
      function init_select2()
      {
          $("#student_list").select2({
              placeholder: "Select Student to sign-in",
              data: students,
          });
+
+         // Auto-submit form when student is selected
+         $("#student_list").on("change", function() {
+             if ($(this).val()) {
+                 submit_form();
+             }
+         });
+
          $("#student_list").select2('focus');
      }
 
