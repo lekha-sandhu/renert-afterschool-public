@@ -47,7 +47,7 @@
         function input_changed() {
             var q = $("#name").val();
             $.ajax({
-                url: "/check_student",
+                url: "{{ url_for('do_check_student') }}",
                 data: { "name": q },
                 success: function(data) {
                       console.log("Searching for: ", q);

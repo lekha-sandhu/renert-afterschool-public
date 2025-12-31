@@ -37,13 +37,13 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link" href="/list-classes" href="/">List of Classes</a>
-                    <a class="nav-link" href="/pick_report">Reports</a>
+                    <a class="nav-link" href="{{ url_for('list_all_classes') }}">List of Classes</a>
+                    <a class="nav-link" href="{{ url_for('pick_report') }}">Reports</a>
 
                     {% if current_user.has_permission_name("afterschool_admin") %}
-                    <a class="nav-link" href="/admin">Organizer</a>
+                    <a class="nav-link" href="{{ url_for('admin.index') }}">Organizer</a>
                     {% endif %}
-                    <a class="nav-link" href="/about">About</a>
+                    <a class="nav-link" href="{{ url_for('about_page') }}">About</a>
                 </div>
             </div>
         </div>

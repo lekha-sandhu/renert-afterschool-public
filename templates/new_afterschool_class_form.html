@@ -5,7 +5,7 @@
   <div class="col">
     <h1>Enter New Afterschool Activity</h1>
 
-    <form action="/process-new-afterschool-class" method="POST">
+    <form action="{{ url_for('process_new_afterschool_class') }}" method="POST">
 
       Activity Name: <input type=text name="activity">
       <br/>

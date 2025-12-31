@@ -211,7 +211,7 @@ def enable_class(afterschool_class_id):
     c.active=True
     db.session.add(c)
     db.session.commit()
-    return redirect("/manage_classes")
+    return redirect(url_for('manage_classes'))
 
 @app.route("/disable_class/<int:afterschool_class_id>")
 @login_required
@@ -221,7 +221,7 @@ def disable_class(afterschool_class_id):
     c.active=False
     db.session.add(c)
     db.session.commit()
-    return redirect("/manage_classes")
+    return redirect(url_for('manage_classes'))
 
 @app.route("/sign_in_student", methods=["POST"])
 @login_required
@@ -259,7 +259,7 @@ def process_student_sign_in():
     db.session.add(x)
     db.session.commit()
 
-    return redirect("/manage_class/"+str(class_id))
+    return redirect(url_for('manage_class', afterschool_class_id=class_id))
 
 
 @app.route("/sign_out_student", methods=["POST"])
@@ -278,7 +278,7 @@ def process_student_sign_out():
         record.sign_out_time = sign_out_time
         db.session.commit()
 
-    return redirect("/manage_class/"+str(class_id))
+    return redirect(url_for('manage_class', afterschool_class_id=class_id))
 
 @app.route("/sign_out_all_students", methods=["POST"])
 @login_required
@@ -297,7 +297,7 @@ def sign_out_all_students():
         db.session.add(student)
 
     db.session.commit()
-    return redirect("/manage_class/" + str(class_id))
+    return redirect(url_for('manage_class', afterschool_class_id=class_id))
 
 @app.route("/manage_enrollments/<int:afterschool_class_id>")
 @login_required
@@ -336,7 +336,7 @@ def process_student_enrollment():
     #checks if the new start date is before the new end date and returns flash and redirect to main enrollment page
     if datetime_new_start > datetime_new_end:
         flash("ERROR: Enrollment not added - End Date is before Start Date." , "danger")
-        return redirect("/manage_enrollments/" + str(class_id))
+        return redirect(url_for('manage_enrollments', afterschool_class_id=class_id))
 
     #queries all the existing student's enrollments for this class (if any)
     all_student_enrollments =  AfterschoolEnrollment.query.filter_by(student_id=student_id,
@@ -349,7 +349,7 @@ def process_student_enrollment():
     for enrollment in all_student_enrollments:
         if check_for_overlap_with_existing_enrollment(enrollment.start_date, enrollment.end_date):
             flash("ERROR: Enrollment not added - New Enrollment Dates overlap with an existing Enrollment.", "danger")
-            return redirect("/manage_enrollments/" + str(class_id))
+            return redirect(url_for('manage_enrollments', afterschool_class_id=class_id))
 
     #if we got to this point, the enrollment should be valid and it adds to database and redirects with no flash()
     new_afterschool_enrollment =  AfterschoolEnrollment(
@@ -362,7 +362,7 @@ def process_student_enrollment():
     db.session.commit()
 
     flash("Enrollment successful.", "success")
-    return redirect("/manage_enrollments/"+str(class_id))
+    return redirect(url_for('manage_enrollments', afterschool_class_id=class_id))
 
 @app.route("/remove_student_enrollment", methods=["POST"])
 @login_required
@@ -377,4 +377,4 @@ def process_remove_student_enrollment():
         db.session.delete(record)
         db.session.commit()
 
-    return redirect("/manage_enrollments/"+str(class_id))
+    return redirect(url_for('manage_enrollments', afterschool_class_id=class_id))

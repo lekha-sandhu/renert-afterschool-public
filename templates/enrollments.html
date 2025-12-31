@@ -33,7 +33,7 @@
             <h2>Instructor: {{ afterschool_class.instructor.name }}</h2>
             <h2>Room: {{ afterschool_class.room }} | Grades: {{ afterschool_class.grades }}</h2>
 
-            <form method="POST" action="/enroll_student" class="d-flex flex-column gap-3">
+            <form method="POST" action="{{ url_for('process_student_enrollment') }}" class="d-flex flex-column gap-3">
 
                 <div>
                     Student
@@ -72,7 +72,7 @@
             </form>
 
             <h4 class="mt-4">Enrolled Students</h4>
-            <a href="/manage_class/{{ afterschool_class.afterschool_class_id }}" class="btn btn-secondary mt-3">Manage Class</a>
+            <a href="{{ url_for('manage_class', afterschool_class_id=afterschool_class.afterschool_class_id) }}" class="btn btn-secondary mt-3">Manage Class</a>
             <table id="my_table" class="table table-bordered">
                 <thead>
                     <tr>
@@ -91,7 +91,7 @@
                             <td>{{afterschool_enrollment.start_date}}</td>
                             <td>{{afterschool_enrollment.end_date}}</td>
                             <td>
-                                <form method="POST" action="/remove_student_enrollment">
+                                <form method="POST" action="{{ url_for('process_remove_student_enrollment') }}">
                                     <input type="hidden" name="afterschool_enrollment_id" value="{{ afterschool_enrollment.afterschool_enrollment_id }}">
                                     <input type="hidden" name="class_id" value="{{ afterschool_class.afterschool_class_id }}">
                                     <button type="submit" class="btn btn-sm btn-danger">Remove</button>

@@ -52,11 +52,11 @@
                     <td class="{% if not c.active %}text-muted{% endif %}">{{ c.grades }}</td>
                     <td>
                         {% if not c.active %}
-                            <a href="/enable_class/{{ c.afterschool_class_id }}" class="btn btn-success btn-sm">
+                            <a href="{{ url_for('enable_class', afterschool_class_id=c.afterschool_class_id) }}" class="btn btn-success btn-sm">
                                 Enable
                             </a>
                         {% else %}
-                            <a href="/disable_class/{{ c.afterschool_class_id }}" class="btn btn-danger btn-sm">
+                            <a href="{{ url_for('disable_class', afterschool_class_id=c.afterschool_class_id) }}" class="btn btn-danger btn-sm">
                                 Disable
                             </a>
                         {% endif %}
