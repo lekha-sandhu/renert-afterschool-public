@@ -1,107 +1,106 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="row">
-  <div class="col">
-    <h1>Add Class!</h1>
+<div class="row justify-content-center">
+  <div class="mt-3 col-md-8">
 
-    <form action="{{ url_for('process_new_afterschool_class') }}" method="POST">
+      <h2>Add New Afterschool Class</h2>
 
-  <!-- <div class="mb-3">
-    <label for="exampleFormControlInput1" class="form-label">Name:</label>
-    <input type="text" class="form-control" id="exampleFormControlInput1" name="name">
-  </div> -->
+      <div class="mt-3">
+        <form action="{{ url_for('process_new_afterschool_class') }}" method="POST">
 
-  <!-- <br> -->
-  Select Day(s):
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="Mon" id="flexCheckDefault1" name="day">
-      <label class="form-check-label" for="flexCheckDefault1">
-        Monday
-      </label>
+
+          <!-- Activity and Room -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="activity" class="form-label">Activity Name:</label>
+              <input type="text" class="form-control" id="activity" name="activity" required>
+            </div>
+            <div class="col-md-6">
+              <label for="room" class="form-label">Room:</label>
+              <input type="text" class="form-control" id="room" name="room" required>
+            </div>
+          </div>
+
+          <!-- Grades -->
+          <div class="mb-3">
+            <label for="grade" class="form-label">Grade(s):</label>
+            <input type="text" class="form-control" id="grade" name="grade"
+                   placeholder="e.g., K,1,2 or 3,4,5" required>
+            <div class="form-text">Enter grades separated by commas (K for Kindergarten, 1-12 for grades)</div>
+          </div>
+
+          <!-- Instructor -->
+          <div class="mb-3">
+            <label for="instructor" class="form-label">Instructor:</label>
+            <select class="form-select" id="instructor" name="instructor" required>
+              <option value="">Select Instructor:</option>
+              {% for i in instructors %}
+                <option value="{{i.id}}">{{i.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Days Selection -->
+          <div class="mb-4">
+            <label class="form-label fw-bold">Select Day(s):</label>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="Mon" id="day_mon" name="day">
+                  <label class="form-check-label" for="day_mon">Monday</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="Tue" id="day_tue" name="day">
+                  <label class="form-check-label" for="day_tue">Tuesday</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="Wed" id="day_wed" name="day">
+                  <label class="form-check-label" for="day_wed">Wednesday</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="Thu" id="day_thu" name="day">
+                  <label class="form-check-label" for="day_thu">Thursday</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="Fri" id="day_fri" name="day">
+                  <label class="form-check-label" for="day_fri">Friday</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="Sat" id="day_sat" name="day">
+                  <label class="form-check-label" for="day_sat">Saturday</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="Sun" id="day_sun" name="day">
+                  <label class="form-check-label" for="day_sun">Sunday</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Time Selection -->
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <label for="start_time" class="form-label">Start Time:</label>
+              <input type="time" class="form-control" id="start_time" name="start_time" required>
+            </div>
+            <div class="col-md-6">
+              <label for="end_time" class="form-label">End Time:</label>
+              <input type="time" class="form-control" id="end_time" name="end_time" required>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a href="{{ url_for('list_all_classes') }}" class="btn btn-secondary me-md-2">Cancel</a>
+            <button type="submit" class="btn btn-primary">Add Class</button>
+          </div>
+
+        </form>
+      </div>
     </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="Tue" id="flexCheckDefault2" name="day">
-      <label class="form-check-label" for="flexCheckDefault2">
-        Tuesday
-      </label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="Wed" id="flexCheckDefault3" name="day">
-      <label class="form-check-label" for="flexCheckDefault3">
-        Wednesday
-      </label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="Thu" id="flexCheckDefault4" name="day">
-      <label class="form-check-label" for="flexCheckDefault4">
-        Thursday
-      </label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="Fri" id="flexCheckDefault5" name="day">
-      <label class="form-check-label" for="flexCheckDefault5">
-        Friday
-      </label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="Sat" id="flexCheckDefault6" name="day">
-      <label class="form-check-label" for="flexCheckDefault6">
-        Saturday
-      </label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="Sun" id="flexCheckDefault7" name="day">
-      <label class="form-check-label" for="flexCheckDefault7">
-        Sunday
-      </label>
-    </div>
-  </br>
-
-  <br>
-    <div class="mb-3">
-      <label for="exampleFormControlInput1" class="form-label">Activity:</label>
-      <input type="text" class="form-control" id="exampleFormControlInput1" name="activity">
-    </div>
-  </br>
-
-  <br>
-    <div class="mb-3">
-      <label for="exampleFormControlInput1" class="form-label">Grade(s):</label>
-      <input type="text" class="form-control" id="exampleFormControlInput1" name="grade">
-    </div>
-  </br>
-
-  <br>
-    <div class="mb-3">
-      <label for="exampleFormControlInput1" class="form-label">Room:</label>
-      <input type="text" class="form-control" id="exampleFormControlInput1" name="room">
-    </div>
-  </br>
-
-  <br>
-    Instructor:
-    <select class="form-select" aria-label="Default select example" name="instructor">
-      <option selected>Select Instructor:</option>
-      {% for i in instructors %}
-        <option value="{{i.id}}">{{i.name}}</option>
-      {% endfor %}
-    </select>
-  </br>
-
-  <br>
-    <label for="start_time">Select start time:</label>
-    <input type="time" id="start_time" name="start_time">
-  </br>
-
-  <br>
-    <label for="end_time">Select end time:</label>
-    <input type="time" id="end_time" name="end_time">
-  </br>
-
-      <input type="submit" value="Add Class" class="btn btn-primary">
-
-    </form>
   </div>
 </div>
 {% endblock %}
